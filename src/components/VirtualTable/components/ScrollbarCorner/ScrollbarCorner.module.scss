@@ -1,0 +1,26 @@
+.scrollbar-corner {
+   position: absolute;
+   right: 0;
+   z-index: 2;
+
+   // Dimensions
+   width: var(--corner-width, 10px);
+   height: var(--corner-height, 10px);
+
+   // Styling
+   background-color: var(--corner-bg, #f1f3f4);
+   opacity: var(--corner-opacity, 1);
+   transition: opacity 0.3s ease;
+
+   // Optional: subtle border to separate from scrollbars
+   border-left: 1px solid rgba(0, 0, 0, 0.05);
+   border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+   .scrollbar-corner {
+      background-color: #ffffff;
+      border: 1px solid #000000;
+   }
+}

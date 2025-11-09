@@ -1,0 +1,90 @@
+.virtual-scrollbar {
+   // Default positioning trong VirtualTable
+   position: absolute;
+   top: 0;
+   right: 0;
+   z-index: 2;
+
+   // Dimensions
+   flex-shrink: 0;
+   user-select: none;
+   width: var(--track-width, 8px);
+   height: var(--height, 100%);
+
+   // Auto-hide scrollbar opacity transition
+   opacity: var(--scrollbar-opacity, 1);
+   transition: opacity 0.3s ease;
+}
+
+.scrollbar-track {
+   position: absolute;
+   top: 0;
+   right: 0;
+   width: 100%;
+   height: var(--track-height, 100%);
+   background-color: var(--track-color, #f1f3f4);
+   border-radius: 4px;
+   cursor: pointer;
+   transition: background-color 0.2s ease;
+
+   &:hover {
+      background-color: var(--track-hover-color, #e8eaed);
+   }
+}
+
+.scrollbar-thumb {
+   position: absolute;
+   width: 100%;
+   height: var(--thumb-height, 50px);
+   transform: translateY(var(--thumb-top, 0px));
+   background-color: var(--thumb-color, #c1c1c1);
+   border-radius: 4px;
+   cursor: grab;
+   transition: background-color 0.2s ease, transform 0.1s ease;
+
+   &:hover {
+      background-color: var(--thumb-hover-color, #a8a8a8);
+   }
+
+   &.is-dragging {
+      background-color: var(--thumb-dragging-color, #9aa0a6);
+      cursor: grabbing;
+      transition: background-color 0.1s ease;
+   }
+
+   &:active {
+      user-select: none;
+   }
+}
+
+/* Responsive scrollbar width */
+@media (max-width: 768px) {
+   .virtual-scrollbar {
+      min-width: 12px;
+   }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+   .scrollbar-track {
+      background-color: #ffffff;
+      border: 1px solid #000000;
+   }
+
+   .scrollbar-thumb {
+      background-color: #000000;
+
+      &:hover,
+      &.is-dragging {
+         background-color: #333333;
+      }
+   }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+   .scrollbar-track,
+   .scrollbar-thumb {
+      transition: none;
+   }
+}

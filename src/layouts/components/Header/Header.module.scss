@@ -1,0 +1,38 @@
+.wrapper {
+  &.sticky {
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 4px var(--octonary-color);
+  }
+
+  .placeholder {
+    background: linear-gradient(
+      90deg,
+      var(--twenty-seventh-color) 25%,
+      var(--thirteenth-color) 37%,
+      var(--twenty-seventh-color) 63%
+    );
+    background-size: 400% 100%;
+    border-radius: 2px;
+    animation: skeleton-loading 1.5s ease infinite;
+  }
+}
+
+@keyframes loading {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

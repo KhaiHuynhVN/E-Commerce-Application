@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+:root {
+   /* variables */
+   --header-height: 80px;
+   /* durations */
+   --primary-duration: 0.2s;
+   --secondary-duration: 0.3s;
+   --tertiary-duration: 0.35s;
+   /* font-weights */
+   --fw-primary: 100;
+   --fw-secondary: 200;
+   --fw-tertiary: 300;
+   --fw-quaternary: 400;
+   --fw-quinary: 500;
+   --fw-senary: 600;
+   --fw-septenary: 700;
+   --fw-octonary: 800;
+   --fw-nonary: 900;
+   // box-shadow
+   --primary-box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+::selection {
+   background-color: var(--primary-color);
+   color: var(--white-color);
+}
+
+html {
+   font-size: 62.5%; // bằng cách này mỗi 1 rem sẽ tương đương với 10px
+
+   *::-webkit-scrollbar {
+      border-radius: 10px;
+      width: var(--scrollbar-width);
+      height: var(--scrollbar-width);
+   }
+
+   *::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: var(--seventeenth-color);
+   }
+
+   *::-webkit-scrollbar-track {
+      border-radius: 0;
+      background-color: var(--eighteenth-color);
+   }
+
+   *::-webkit-scrollbar-corner {
+      background-color: var(--eighteenth-color);
+   }
+}
+
+body {
+   font-family: "Roboto", sans-serif;
+   font-size: 1.6rem;
+
+   &.overflow-hidden {
+      overflow: hidden;
+      height: 100%;
+      width: calc(100% - var(--scrollbar-width));
+   }
+}
+
+button,
+input {
+   background: none;
+   border: none;
+   outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:active,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+   color: var(--white-color) !important;
+   -webkit-text-fill-color: var(--white-color) !important;
+   caret-color: var(--white-color) !important;
+   transition: background-color 999999999s ease-in-out;
+}
+
+span,
+nav,
+ul,
+li,
+a {
+   display: block;
+}
+
+li {
+   list-style: none;
+}
+
+a {
+   text-decoration: none;
+}

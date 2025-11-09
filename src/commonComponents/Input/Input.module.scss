@@ -1,0 +1,10 @@
+.wrapper {
+   &.primary {
+      .input {
+         padding: 12px 16px;
+         background-color: var(--quinary-color);
+         border: 1px solid var(--quaternary-color);
+         border-radius: 6px;
+      }
+   }
+}

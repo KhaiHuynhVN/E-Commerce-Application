@@ -1,0 +1,109 @@
+/* VirtualTable Component - Structural Styles Only */
+
+.wrapper {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   border-radius: 8px;
+
+   .table-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+         display: none;
+      }
+
+      /* Table Header - Structure Only */
+      .table-header {
+         display: flex;
+         position: sticky;
+         top: 0;
+         z-index: 1;
+
+         .table-header-cell {
+            display: flex;
+            align-items: center;
+            border-right: var(--border-header-cell-width, 1px) solid var(--border-header-cell-color, #e1e5e9);
+            border-bottom: var(--border-header-bottom-width, 1px) solid var(--border-header-bottom-color, #e1e5e9);
+
+            &:last-child {
+               border-right: none;
+            }
+         }
+      }
+
+      /* Table Body */
+      .table-body {
+         position: relative;
+
+         /* Body spacer for virtual scrolling */
+         .body-spacer {
+            position: relative;
+         }
+
+         /* Body rows container */
+         .body-rows-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+         }
+      }
+
+      /* Table Rows - Structure Only */
+      .table-row {
+         display: flex;
+         transition: background-color 0.15s ease;
+
+         .table-cell {
+            display: flex;
+            align-items: center;
+            border-right: var(--border-body-cell-width, 1px) solid var(--border-body-cell-color, #e1e5e9);
+            border-bottom: var(--border-body-row-width, 1px) solid var(--border-body-row-color, #e1e5e9);
+            word-break: break-word;
+
+            &:last-child {
+               border-right: none;
+            }
+         }
+
+         &:last-child {
+            border-bottom: none;
+         }
+      }
+   }
+
+   /* Table Footer - Structure Only (Outside table-container, direct child of wrapper) */
+   .table-footer {
+      display: flex;
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+         display: none;
+      }
+
+      .table-footer-cell {
+         display: flex;
+         align-items: center;
+         border-right: var(--border-footer-cell-width, 1px) solid var(--border-footer-cell-color, #e1e5e9);
+         border-top: var(--border-footer-top-width, 1px) solid var(--border-footer-top-color, #e1e5e9);
+
+         &:last-child {
+            border-right: none;
+         }
+      }
+   }
+}

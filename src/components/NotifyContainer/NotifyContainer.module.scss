@@ -1,0 +1,25 @@
+.wrapper {
+   position: fixed;
+   top: 0;
+   left: 0;
+   color: var(--white-color);
+   z-index: 9999;
+
+   .hover-area {
+      display: flex;
+      justify-content: center;
+      // background-color: red;
+      perspective: 10000px;
+      transform-style: preserve-3d;
+
+      &:hover {
+         .notify-item {
+            &:global(.stacked) {
+               opacity: 1;
+               transform: scale(1);
+               pointer-events: auto;
+            }
+         }
+      }
+   }
+}

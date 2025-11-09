@@ -1,0 +1,7 @@
+.root-wrapper {
+   &:global.ant-modal-root {
+      .ant-modal-wrap {
+         overflow: hidden;
+      }
+   }
+}
