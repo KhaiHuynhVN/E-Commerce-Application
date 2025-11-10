@@ -12,6 +12,8 @@ interface InnerLoaderProps {
   circleClassName?: string;
   /** Kích thước loader */
   size?: string;
+  /** Màu stroke */
+  strokeColor?: string;
   /** Callback khi transition end */
   onTransitionEnd?: TransitionEventHandler<HTMLDivElement>;
 }

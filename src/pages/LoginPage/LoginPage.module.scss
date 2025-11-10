@@ -1,1 +1,161 @@
+.wrapper {
+  // Custom gradient background
+  background: linear-gradient(
+    135deg,
+    var(--forty-sixth-color) 0%,
+    var(--forty-seventh-color) 100%
+  );
+  position: relative;
+  overflow: hidden;
 
+  // Animated background pattern
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    );
+    background-size: 50px 50px;
+    animation: moveBackground 20s linear infinite;
+  }
+
+  @keyframes moveBackground {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(50px, 50px);
+    }
+  }
+
+  // Login Card
+  .loginCard {
+    animation: slideIn 0.5s ease-out;
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    // Title with gradient text
+    .title {
+      font-size: var(--fs-septenary);
+      font-weight: var(--fw-septenary);
+      color: var(--thirteenth-color);
+      background: linear-gradient(
+        135deg,
+        var(--forty-sixth-color) 0%,
+        var(--forty-seventh-color) 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    // Subtitle
+    .subtitle {
+      font-size: var(--fs-secondary);
+      color: var(--tertiary-color);
+    }
+
+    // Form label
+    .label {
+      font-size: var(--fs-secondary);
+      font-weight: var(--fw-quinary);
+      color: var(--fifteenth-color);
+    }
+
+    // Error text with shake animation
+    .errorText {
+      color: var(--twentieth-color);
+      font-size: var(--fs-primary);
+      animation: shake 0.3s ease-in-out;
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+    }
+
+    // API error banner
+    .apiError {
+      background-color: var(--twenty-ninth-color);
+      border: 1px solid
+        color-mix(in srgb, var(--twentieth-color) 30%, transparent);
+      color: var(--twentieth-color);
+      font-size: var(--fs-secondary);
+      animation: fadeIn 0.3s ease-in;
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    }
+
+    // Hint section
+    .hint {
+      background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--twelfth-color) 5%, transparent),
+        color-mix(in srgb, var(--forty-sixth-color) 5%, transparent)
+      );
+      border: 1px solid
+        color-mix(in srgb, var(--twelfth-color) 20%, transparent);
+
+      .hintTitle {
+        font-size: var(--fs-secondary);
+        font-weight: var(--fw-senary);
+        color: var(--fifteenth-color);
+      }
+
+      .hintContent {
+        font-size: var(--fs-secondary);
+        color: var(--tertiary-color);
+
+        strong {
+          font-family: ui-monospace, monospace;
+          background-color: var(--white-color);
+          padding: 0.125rem 0.5rem;
+          border-radius: 0.25rem;
+          color: var(--forty-seventh-color);
+          font-weight: var(--fw-quinary);
+        }
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 640px) {
+    .loginCard {
+      padding: 1.5rem;
+
+      .title {
+        font-size: var(--fs-senary);
+      }
+    }
+  }
+}

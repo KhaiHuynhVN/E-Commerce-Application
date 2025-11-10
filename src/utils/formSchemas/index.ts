@@ -1,1 +1,1 @@
-export * as formSchemas from "./formSchemas";
+export { createLoginSchema } from "./formSchemas";

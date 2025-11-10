@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-white: var(--white-color);
+  --color-black: var(--black-color);
+  --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
+  --color-tertiary: var(--tertiary-color);
+  --color-quaternary: var(--quaternary-color);
+  --color-quinary: var(--quinary-color);
+  --color-senary: var(--senary-color);
+  --color-septenary: var(--septenary-color);
+  --color-octonary: var(--octonary-color);
+  --color-nonary: var(--nonary-color);
+  --color-denary: var(--denary-color);
+  --color-eleventh: var(--eleventh-color);
+  --color-twelfth: var(--twelfth-color);
+  --color-thirteenth: var(--thirteenth-color);
+  --color-fourteenth: var(--fourteenth-color);
+  --color-fifteenth: var(--fifteenth-color);
+  --color-sixteenth: var(--sixteenth-color);
+  --color-seventeenth: var(--seventeenth-color);
+  --color-eighteenth: var(--eighteenth-color);
+  --color-nineteenth: var(--nineteenth-color);
+  --color-twentieth: var(--twentieth-color);
+  --color-twenty-first: var(--twenty-first-color);
+  --color-twenty-second: var(--twenty-second-color);
+  --color-twenty-third: var(--twenty-third-color);
+  --color-twenty-fourth: var(--twenty-fourth-color);
+  --color-twenty-fifth: var(--twenty-fifth-color);
+  --color-twenty-sixth: var(--twenty-sixth-color);
+  --color-twenty-seventh: var(--twenty-seventh-color);
+  --color-twenty-eighth: var(--twenty-eighth-color);
+  --color-twenty-ninth: var(--twenty-ninth-color);
+  --color-thirtieth: var(--thirtieth-color);
+  --color-thirty-first: var(--thirty-first-color);
+  --color-thirty-second: var(--thirty-second-color);
+  --color-thirty-third: var(--thirty-third-color);
+  --color-thirty-fourth: var(--thirty-fourth-color);
+  --color-thirty-fifth: var(--thirty-fifth-color);
+  --color-thirty-sixth: var(--thirty-sixth-color);
+  --color-thirty-seventh: var(--thirty-seventh-color);
+  --color-thirty-eighth: var(--thirty-eighth-color);
+  --color-thirty-ninth: var(--thirty-ninth-color);
+  --color-fortieth: var(--fortieth-color);
+  --color-forty-first: var(--forty-first-color);
+  --color-forty-second: var(--forty-second-color);
+  --color-forty-third: var(--forty-third-color);
+  --color-forty-fourth: var(--forty-fourth-color);
+  --color-forty-fifth: var(--forty-fifth-color);
+  --color-forty-sixth: var(--forty-sixth-color);
+  --color-forty-seventh: var(--forty-seventh-color);
+
+  /* Font Sizes */
+  --font-size-primary: var(--fs-primary);
+  --font-size-secondary: var(--fs-secondary);
+  --font-size-tertiary: var(--fs-tertiary);
+  --font-size-quaternary: var(--fs-quaternary);
+  --font-size-quinary: var(--fs-quinary);
+  --font-size-senary: var(--fs-senary);
+  --font-size-septenary: var(--fs-septenary);
+  --font-size-octonary: var(--fs-octonary);
+  --font-size-nonary: var(--fs-nonary);
+
+  /* Font Weights */
+  --font-weight-primary: var(--fw-primary);
+  --font-weight-secondary: var(--fw-secondary);
+  --font-weight-tertiary: var(--fw-tertiary);
+  --font-weight-quaternary: var(--fw-quaternary);
+  --font-weight-quinary: var(--fw-quinary);
+  --font-weight-senary: var(--fw-senary);
+  --font-weight-septenary: var(--fw-septenary);
+  --font-weight-octonary: var(--fw-octonary);
+  --font-weight-nonary: var(--fw-nonary);
+
+  /* Transition Duration */
+  --transition-duration-primary: var(--primary-duration);
+  --transition-duration-secondary: var(--secondary-duration);
+  --transition-duration-tertiary: var(--tertiary-duration);
+
+  /* Spacing */
+  --spacing-header: var(--header-height);
+  --spacing-scrollbar: var(--scrollbar-width);
+  --gutter-top: var(--gutter-top);
+
+  /* Box Shadow */
+  --box-shadow-primary: var(--primary-box-shadow);
+}

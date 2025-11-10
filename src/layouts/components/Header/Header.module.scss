@@ -1,38 +1,136 @@
 .wrapper {
+  height: var(--header-height);
+  transition: all var(--secondary-duration);
+  position: sticky;
+  top: 0;
+  background-color: var(--white-color);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--black-color) 10%, transparent);
+
   &.sticky {
-    position: sticky;
-    top: 0;
-    box-shadow: 0 2px 4px var(--octonary-color);
+    box-shadow: 0 4px 16px
+      color-mix(in srgb, var(--black-color) 20%, transparent);
   }
 
-  .placeholder {
-    background: linear-gradient(
-      90deg,
-      var(--twenty-seventh-color) 25%,
-      var(--thirteenth-color) 37%,
-      var(--twenty-seventh-color) 63%
-    );
-    background-size: 400% 100%;
-    border-radius: 2px;
-    animation: skeleton-loading 1.5s ease infinite;
-  }
-}
+  .container {
+    height: 100%;
 
-@keyframes loading {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
+    .logo {
+      transition: all var(--primary-duration);
 
-@keyframes skeleton-loading {
-  0% {
-    background-position: 100% 50%;
+      .logoIcon {
+        fill: var(--forty-sixth-color);
+        stroke: var(--forty-sixth-color);
+      }
+
+      .brandName {
+        font-size: var(--fs-senary);
+        font-weight: var(--fw-septenary);
+        background: linear-gradient(
+          135deg,
+          var(--forty-sixth-color) 0%,
+          var(--forty-seventh-color) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .nav {
+      .cartButton {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: all var(--primary-duration);
+        color: var(--fifteenth-color);
+        position: relative;
+
+        svg {
+          fill: currentColor;
+          stroke: currentColor;
+        }
+
+        &:hover {
+          background-color: var(--septenary-color);
+          color: var(--forty-sixth-color);
+        }
+
+        .badge {
+          position: absolute;
+          top: -0.25rem;
+          right: -0.25rem;
+          background: linear-gradient(
+            135deg,
+            var(--forty-sixth-color) 0%,
+            var(--forty-seventh-color) 100%
+          );
+          color: var(--white-color);
+          font-size: var(--fs-primary);
+          font-weight: var(--fw-septenary);
+          padding: 0.125rem 0.375rem;
+          border-radius: 9999px;
+          min-width: 1.25rem;
+          height: 1.25rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .languageSelector {
+        .separator {
+          color: var(--twenty-eighth-color);
+        }
+      }
+
+      .userInfo {
+        .avatar {
+          border: 2px solid var(--forty-sixth-color);
+          transition: all var(--primary-duration);
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px
+              color-mix(in srgb, var(--forty-sixth-color) 20%, transparent);
+          }
+        }
+
+        .username {
+          font-size: var(--fs-tertiary);
+          font-weight: var(--fw-quinary);
+          color: var(--fifteenth-color);
+        }
+      }
+    }
   }
-  100% {
-    background-position: 0 50%;
+
+  // Responsive
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+
+      .logo {
+        .brandName {
+          font-size: var(--fs-quinary);
+        }
+      }
+
+      .nav {
+        gap: 1rem;
+
+        .userInfo {
+          .username {
+            display: none; // Ẩn username trên mobile
+          }
+        }
+      }
+    }
   }
 }

@@ -5,15 +5,24 @@ interface RouteConfig {
 
 interface RouteConfigs {
   login: RouteConfig;
+  products: RouteConfig;
+  cart: RouteConfig;
   // Thêm các routes khác ở đây khi cần
-  // home: RouteConfig;
-  // dashboard: RouteConfig;
+  // profile: RouteConfig;
 }
 
 const routeConfigs: RouteConfigs = {
   login: {
     pageName: "Login",
     path: "/login",
+  },
+  products: {
+    pageName: "Products",
+    path: "/",
+  },
+  cart: {
+    pageName: "Cart",
+    path: "/cart",
   },
 } as const;
 

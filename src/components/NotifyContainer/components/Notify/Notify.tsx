@@ -120,7 +120,7 @@ const Notify = ({
           className={cx("load-icon", {
             "hide-load-icon": promiseState !== "pending",
           })}
-          circleClassName={cx("stroke-primary-color stroke-[4px]")}
+          circleClassName={cx("stroke-(--notify-info-color) stroke-[5px]")}
           onTransitionEnd={handleLoadIconTransitionEnd}
         />
       )}
@@ -161,12 +161,23 @@ const Notify = ({
               isFrozen || (promise && promiseState === "pending"),
             "progress-bar--running":
               !isFrozen && (!promise || promiseState !== "pending"),
-            "bg-primary-color": type === "info",
-            "bg-fortieth-color": type === "success",
-            "bg-thirty-ninth-color": type === "reject" || type === "error",
-            "bg-thirty-fifth-color": type === "warning",
           })}
-          onAnimationEnd={handleProgressBarAnimationEnd}
+          style={{
+            backgroundColor:
+              type === "info"
+                ? "var(--notify-info-color)"
+                : type === "success"
+                ? "var(--notify-success-color)"
+                : type === "reject" || type === "error"
+                ? "var(--notify-error-color)"
+                : type === "warning"
+                ? "var(--notify-warning-color)"
+                : "var(--notify-info-color)",
+          }}
+          onAnimationEnd={(e) => {
+            e.stopPropagation();
+            handleProgressBarAnimationEnd();
+          }}
         ></div>
       )}
     </div>

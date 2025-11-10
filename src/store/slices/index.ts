@@ -16,3 +16,10 @@ export {
   globalActions,
   globalSelectors,
 } from "./ortherSlices";
+
+export {
+  // cart
+  cartSlice,
+  cartActions,
+  cartSelectors,
+} from "./pageSlices";

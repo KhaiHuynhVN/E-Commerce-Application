@@ -184,6 +184,8 @@ class NotifyService {
       maxSize: Infinity,
       promise: false,
       customIcons: null,
+      iconColor: undefined,
+      progressBarColor: undefined,
     }
   ): NotificationResult {
     // Định nghĩa các giá trị mặc định cho options
@@ -214,6 +216,8 @@ class NotifyService {
       maxSize: Infinity,
       promise: false,
       customIcons: null,
+      iconColor: "#052dff",
+      progressBarColor: "#052dff",
     };
     // Merge options với default options
     const mergedOptions = { ...defaultOptions, ...options };
@@ -268,7 +272,30 @@ class NotifyService {
       maxSize,
       promise,
       customIcons,
+      iconColor,
+      progressBarColor,
     } = mergedOptions;
+
+    // Helper function để lấy màu mặc định dựa trên type
+    const getDefaultColor = (notifyType: NotifyType): string => {
+      switch (notifyType) {
+        case "info":
+          return "#052dff";
+        case "success":
+          return "#00a51a";
+        case "error":
+        case "reject":
+          return "#ea1239";
+        case "warning":
+          return "#ffad0d";
+        default:
+          return "#052dff";
+      }
+    };
+
+    // Set màu mặc định nếu không được cung cấp
+    const finalIconColor = iconColor || getDefaultColor(type);
+    const finalProgressBarColor = progressBarColor || getDefaultColor(type);
 
     // Cập nhật maxStack toàn cục nếu được chỉ định
     if (maxStack !== undefined) {
@@ -309,6 +336,8 @@ class NotifyService {
       promise,
       promiseState: promise ? "pending" : null,
       customIcons,
+      iconColor: finalIconColor,
+      progressBarColor: finalProgressBarColor,
     };
 
     const placementNotifications = this.notifications[placement];
@@ -613,10 +642,6 @@ class NotifyService {
     return null;
   }
 }
-
-// =====================================================
-// EXPORT - Xuất instance singleton
-// =====================================================
 
 /** Instance singleton của NotifyService */
 const notifyService = new NotifyService();

@@ -45,7 +45,7 @@ function App() {
         </Suspense>
       </Router>
       <GlobalLoader />
-      <NotifyContainer className={"z-[2]"} />
+      <NotifyContainer className={"z-2"} />
     </>
   );
 }

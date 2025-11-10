@@ -1,56 +1,65 @@
 :root {
-   /* colors */
-   --white-color: #ffffff;
-   --black-color: #000000;
-   --primary-color: #052dff;
-   --secondary-color: #141414;
-   --tertiary-color: #8c8c8c;
-   --quaternary-color: #313233;
-   --quinary-color: #0b0c0e;
-   --senary-color: #b4b4b4;
-   --septenary-color: #f5f5f5;
-   --octonary-color: #060606;
-   --nonary-color: #161618;
-   --denary-color: #424242;
-   --eleventh-color: #060606b3;
-   --twelfth-color: #2f80ed;
-   --thirteenth-color: #434343;
-   --fourteenth-color: #f0f0f0;
-   --fifteenth-color: #4c4c4c;
-   --sixteenth-color: #2e2e2e;
-   --seventeenth-color: #005baa;
-   --eighteenth-color: #262626;
-   --nineteenth-color: #4a4a4a;
-   --twentieth-color: #ff0c0c;
-   --twenty-first-color: #1137fc;
-   --twenty-second-color: #1ef10c;
-   --twenty-third-color: #121212;
-   --twenty-fourth-color: #2b2b2b;
-   --twenty-fifth-color: #3d3d3d;
-   --twenty-sixth-color: #313131;
-   --twenty-seventh-color: #6c6c6c;
-   --twenty-eighth-color: #282828;
-   --twenty-ninth-color: #f5eded;
-   --thirtieth-color: #868686;
-   --thirty-first-color: #34c85e; // màu giá khi tăng
-   --thirty-second-color: #727484;
-   --thirty-third-color: #dfdfdf;
-   --thirty-fourth-color: #f365ff; // màu giá trần
-   --thirty-fifth-color: #ffad0d; // màu giá tham chiếu
-   --thirty-sixth-color: #40cbf9; // màu giá sàn
-   --thirty-seventh-color: #cacaca;
-   --thirty-eighth-color: #43434380;
-   --thirty-ninth-color: #ea1239;
-   --fortieth-color: #00a51a;
-   --forty-first-color: #ffffff80;
-   --forty-second-color: #ff5757;
-   --forty-third-color: #ff4242; // màu giá khi giảm
-   --forty-fourth-color: #f26522;
-   --forty-fifth-color: #ff7878;
+  /* colors */
+  --white-color: #ffffff;
+  --black-color: #000000;
+  --primary-color: #052dff;
+  --secondary-color: #141414;
+  --tertiary-color: #8c8c8c;
+  --quaternary-color: #313233;
+  --quinary-color: #0b0c0e;
+  --senary-color: #b4b4b4;
+  --septenary-color: #f5f5f5;
+  --octonary-color: #060606;
+  --nonary-color: #161618;
+  --denary-color: #424242;
+  --eleventh-color: #060606b3;
+  --twelfth-color: #2f80ed;
+  --thirteenth-color: #434343;
+  --fourteenth-color: #f0f0f0;
+  --fifteenth-color: #4c4c4c;
+  --sixteenth-color: #2e2e2e;
+  --seventeenth-color: #005baa;
+  --eighteenth-color: #262626;
+  --nineteenth-color: #4a4a4a;
+  --twentieth-color: #ff0c0c;
+  --twenty-first-color: #1137fc;
+  --twenty-second-color: #1ef10c;
+  --twenty-third-color: #121212;
+  --twenty-fourth-color: #2b2b2b;
+  --twenty-fifth-color: #3d3d3d;
+  --twenty-sixth-color: #313131;
+  --twenty-seventh-color: #6c6c6c;
+  --twenty-eighth-color: #282828;
+  --twenty-ninth-color: #f5eded;
+  --thirtieth-color: #868686;
+  --thirty-first-color: #34c85e; // màu giá khi tăng
+  --thirty-second-color: #727484;
+  --thirty-third-color: #dfdfdf;
+  --thirty-fourth-color: #f365ff; // màu giá trần
+  --thirty-fifth-color: #ffad0d; // màu giá tham chiếu
+  --thirty-sixth-color: #40cbf9; // màu giá sàn
+  --thirty-seventh-color: #cacaca;
+  --thirty-eighth-color: #43434380;
+  --thirty-ninth-color: #ea1239;
+  --fortieth-color: #00a51a;
+  --forty-first-color: #ffffff80;
+  --forty-second-color: #ff5757;
+  --forty-third-color: #ff4242; // màu giá khi giảm
+  --forty-fourth-color: #f26522;
+  --forty-fifth-color: #ff7878;
+  --forty-sixth-color: #667eea; // purple gradient start
+  --forty-seventh-color: #764ba2; // purple gradient end
+
+  /* Notification colors */
+  --notify-info-color: var(--primary-color); // #052dff
+  --notify-success-color: var(--fortieth-color); // #00a51a
+  --notify-error-color: var(--thirty-ninth-color); // #ea1239
+  --notify-warning-color: var(--thirty-fifth-color); // #ffad0d
+  --notify-reject-color: var(--thirty-ninth-color); // #ea1239
 }
 
 body[data-theme="dark-theme"] {
-   /* change themes here... */
-   --white-color: #000000;
-   --primary-color: #d9ff00;
+  /* change themes here... */
+  --white-color: #000000;
+  --primary-color: #d9ff00;
 }

@@ -5,6 +5,7 @@ import {
   authSlice,
   globalSlice,
   pendingManagerSlice,
+  cartSlice,
 } from "./slices";
 
 const store = configureStore({
@@ -13,10 +14,12 @@ const store = configureStore({
     auth: authSlice.reducer,
     global: globalSlice.reducer,
     pendingManager: pendingManagerSlice.reducer,
+    cart: cartSlice.reducer,
   },
 });
 
-export default store;
+type RootState = ReturnType<typeof store.getState>;
+type AppDispatch = typeof store.dispatch;
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export default store;
+export type { RootState, AppDispatch };

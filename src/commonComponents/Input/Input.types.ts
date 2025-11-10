@@ -52,7 +52,7 @@ interface InputProps
   name?: string;
 
   /** Control object từ react-hook-form */
-  control?: Control;
+  control?: Control<FieldValues>;
 
   /** Chế độ common (không dùng react-hook-form) */
   isCommon?: boolean;
@@ -127,7 +127,7 @@ interface InputProps
 interface UseInputParams {
   value: string;
   isCommon: boolean;
-  control?: Control;
+  control?: Control<FieldValues>;
   formatValue: (value: string) => string;
   isTrimStart: boolean;
   onChange: (value: string) => void;

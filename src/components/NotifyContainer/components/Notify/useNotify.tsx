@@ -126,16 +126,33 @@ const useNotify = ({
         className?: string;
         width?: string;
         height?: string;
+        fill?: string;
       }>;
+
+      // Lấy màu dựa trên type
+      const getColorVar = () => {
+        switch (type) {
+          case "info":
+            return "var(--notify-info-color)";
+          case "success":
+            return "var(--notify-success-color)";
+          case "error":
+            return "var(--notify-error-color)";
+          case "reject":
+            return "var(--notify-reject-color)";
+          case "warning":
+            return "var(--notify-warning-color)";
+          default:
+            return "var(--notify-info-color)";
+        }
+      };
+
       return cloneElement(iconElement, {
         className: cx(iconElement.props.className, "icon", {
-          "text-primary-color": type === "info",
-          "text-fortieth-color": type === "success",
-          "text-thirty-ninth-color": type === "reject" || type === "error",
-          "text-thirty-fifth-color": type === "warning",
           "show-icon": promise && promiseState !== "pending",
           "not-promise": !promise,
         }),
+        fill: getColorVar(),
         width: iconElement.props.width || "30",
         height: iconElement.props.height || "30",
       });
@@ -145,10 +162,11 @@ const useNotify = ({
       case "info":
         return (
           <Icons.NotifyIcon
-            className={cx("icon", "text-primary-color", {
+            className={cx("icon", {
               "show-icon": promise && promiseState !== "pending",
               "not-promise": !promise,
             })}
+            fill="var(--notify-info-color)"
             width="30"
             height="30"
           />
@@ -156,10 +174,11 @@ const useNotify = ({
       case "success":
         return (
           <Icons.CheckedIcon
-            className={cx("icon", "text-fortieth-color", {
+            className={cx("icon", {
               "show-icon": promise && promiseState === "fulfilled",
               "not-promise": !promise,
             })}
+            fill="var(--notify-success-color)"
             width="30"
             height="30"
           />
@@ -167,10 +186,11 @@ const useNotify = ({
       case "reject":
         return (
           <Icons.RejectIcon
-            className={cx("icon", "text-thirty-ninth-color", {
+            className={cx("icon", {
               "show-icon": promise && promiseState === "rejected",
               "not-promise": !promise,
             })}
+            fill="var(--notify-reject-color)"
             width="30"
             height="30"
           />
@@ -178,10 +198,11 @@ const useNotify = ({
       case "warning":
         return (
           <Icons.WarningIcon
-            className={cx("icon", "text-thirty-fifth-color", {
+            className={cx("icon", {
               "show-icon": promise && promiseState !== "pending",
               "not-promise": !promise,
             })}
+            fill="var(--notify-warning-color)"
             width="30"
             height="30"
           />
@@ -189,10 +210,11 @@ const useNotify = ({
       case "error":
         return (
           <Icons.ErrorIcon
-            className={cx("icon", "text-thirty-ninth-color", {
+            className={cx("icon", {
               "show-icon": promise && promiseState !== "pending",
               "not-promise": !promise,
             })}
+            fill="var(--notify-error-color)"
             width="30"
             height="30"
           />

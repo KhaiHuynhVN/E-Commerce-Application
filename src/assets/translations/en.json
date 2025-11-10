@@ -12,5 +12,88 @@
     "edit": "Edit",
     "add": "Add",
     "search": "Search"
+  },
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to continue",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "loggingIn": "Signing in...",
+    "testAccount": "Test Account",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password"
+  },
+  "serverErrors": {
+    "error": "Error",
+    "unknownError": "An unknown error occurred",
+    "Invalid credentials": "Invalid username or password",
+    "Authentication failed": "Authentication failed, please try again",
+    "User not found": "User not found",
+    "Incorrect username or password": "Incorrect username or password",
+    "Network Error": "Network connection error",
+    "Request failed": "Request failed, please try again"
+  },
+  "validationErrors": {
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least {{min}} characters"
+  },
+  "products": {
+    "title": "Discover Products",
+    "productsFound": "{{count}} products found",
+    "productFound": "{{count}} product found",
+    "noResults": "No products found for \"{{query}}\"",
+    "addToCart": "Add to Cart",
+    "addingToCart": "Adding...",
+    "addedToCart": "Added to cart successfully!",
+    "outOfStock": "Out of Stock",
+    "noMoreProducts": "You've reached the end! No more products to load."
+  },
+  "header": {
+    "brandName": "E-Shop",
+    "cart": "Shopping Cart",
+    "logout": "Logout"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "emptyCart": "Your cart is empty",
+    "emptyCartHint": "Start shopping to add items to your cart",
+    "remove": "Remove",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout"
+  },
+  "languages": {
+    "english": "English",
+    "vietnamese": "Vietnamese"
+  },
+  "pendingMessages": {
+    "loginInProgress": "Logging in, please wait...",
+    "getCurrentUserInProgress": "Loading user data, please wait...",
+    "refreshTokenInProgress": "Refreshing token, please wait...",
+    "getProductsInProgress": "Loading products, please wait...",
+    "searchProductsInProgress": "Searching products, please wait...",
+    "getProductByIdInProgress": "Loading product details, please wait...",
+    "getCategoriesInProgress": "Loading categories, please wait...",
+    "addToCartInProgress": "Adding to cart, please wait...",
+    "updateCartInProgress": "Updating cart, please wait...",
+    "getCartInProgress": "Loading cart, please wait...",
+    "deleteCartInProgress": "Deleting cart, please wait..."
+  },
+  "pendingErrors": {
+    "loginInProgress": "Login request already in progress",
+    "getCurrentUserInProgress": "Get current user request already in progress",
+    "refreshTokenInProgress": "Refresh token request already in progress",
+    "getProductsInProgress": "Get products request already in progress",
+    "searchProductsInProgress": "Search products request already in progress",
+    "getProductByIdInProgress": "Get product by ID request already in progress",
+    "getCategoriesInProgress": "Get categories request already in progress",
+    "addToCartInProgress": "Add to cart request already in progress",
+    "updateCartInProgress": "Update cart request already in progress",
+    "getCartInProgress": "Get cart request already in progress",
+    "deleteCartInProgress": "Delete cart request already in progress"
   }
 }

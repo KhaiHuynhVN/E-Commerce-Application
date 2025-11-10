@@ -93,6 +93,10 @@ interface NotifyOptions {
   promise?: boolean;
   /** Icon custom */
   customIcons?: CustomIcons | null;
+  /** Màu icon (mặc định dựa trên type) */
+  iconColor?: string;
+  /** Màu progress bar (mặc định dựa trên type) */
+  progressBarColor?: string;
 }
 
 /** Thông tin đầy đủ của một notification */
@@ -151,6 +155,10 @@ interface Notification {
   promiseState: PromiseState | null;
   /** Icon custom */
   customIcons: CustomIcons | null;
+  /** Màu icon */
+  iconColor?: string;
+  /** Màu progress bar */
+  progressBarColor?: string;
   /** Chiều cao thực tế sau khi render */
   height?: number;
 }

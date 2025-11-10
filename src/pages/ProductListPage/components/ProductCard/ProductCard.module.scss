@@ -1,0 +1,110 @@
+.wrapper {
+  transition: all var(--primary-duration);
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px
+      color-mix(in srgb, var(--forty-sixth-color) 30%, transparent);
+  }
+
+  .imageContainer {
+    .image {
+      transition: transform var(--secondary-duration);
+    }
+
+    &:hover .image {
+      transform: scale(1.05);
+    }
+
+    .discount {
+      background: linear-gradient(
+        135deg,
+        var(--forty-sixth-color) 0%,
+        var(--forty-seventh-color) 100%
+      );
+      color: var(--white-color);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: var(--fs-secondary);
+      font-weight: var(--fw-senary);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--black-color) 30%, transparent);
+    }
+
+    .outOfStock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: color-mix(in srgb, var(--black-color) 70%, transparent);
+
+      span {
+        color: var(--white-color);
+        font-size: var(--fs-quaternary);
+        font-weight: var(--fw-septenary);
+        background-color: var(--twentieth-color);
+        padding: 0.5rem 1.5rem;
+        border-radius: 0.5rem;
+      }
+    }
+  }
+
+  .info {
+    .title {
+      font-size: var(--fs-quaternary);
+      font-weight: var(--fw-senary);
+      color: var(--secondary-color);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rating {
+      .stars {
+        font-size: var(--fs-quaternary);
+      }
+
+      .ratingValue {
+        font-size: var(--fs-tertiary);
+        font-weight: var(--fw-quinary);
+        color: var(--fifteenth-color);
+      }
+    }
+
+    .priceContainer {
+      .price {
+        font-size: var(--fs-senary);
+        font-weight: var(--fw-septenary);
+        background: linear-gradient(
+          135deg,
+          var(--forty-sixth-color) 0%,
+          var(--forty-seventh-color) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .originalPrice {
+        font-size: var(--fs-tertiary);
+        color: var(--tertiary-color);
+        text-decoration: line-through;
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 640px) {
+    .info {
+      padding: 0.75rem;
+
+      .title {
+        font-size: var(--fs-tertiary);
+      }
+
+      .priceContainer .price {
+        font-size: var(--fs-quinary);
+      }
+    }
+  }
+}
+

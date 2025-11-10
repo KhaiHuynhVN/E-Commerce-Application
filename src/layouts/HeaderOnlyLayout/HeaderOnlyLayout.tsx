@@ -17,7 +17,7 @@ const HeaderOnlyLayout = ({ children }: HeaderOnlyLayoutProps) => {
       <div
         className={cx(
           "content",
-          "mt-[16px] min-h-[calc(100vh-var(--header-height)-var(--sidebar-modal-gutter-top))]"
+          "pt-(--gutter-top) min-h-[calc(100vh-var(--header-height)-var(--gutter-top))]"
         )}
       >
         {children}

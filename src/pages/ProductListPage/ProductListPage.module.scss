@@ -1,0 +1,94 @@
+.wrapper {
+  min-height: 100vh;
+
+  .container {
+    .title {
+      font-size: var(--fs-septenary);
+      font-weight: var(--fw-septenary);
+      background: linear-gradient(
+        135deg,
+        var(--forty-sixth-color) 0%,
+        var(--forty-seventh-color) 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideIn 0.5s ease-out;
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .count {
+      font-size: var(--fs-tertiary);
+      font-weight: var(--fw-quinary);
+      color: var(--fifteenth-color);
+    }
+
+    .noResults,
+    .noMore {
+      font-size: var(--fs-quaternary);
+      color: var(--tertiary-color);
+      padding: 4rem 0;
+    }
+
+    .error {
+      background-color: var(--twenty-ninth-color);
+      border: 1px solid
+        color-mix(in srgb, var(--twentieth-color) 30%, transparent);
+      color: var(--twentieth-color);
+      font-size: var(--fs-tertiary);
+      font-weight: var(--fw-quinary);
+    }
+
+    .loading {
+      animation: fadeIn 0.3s ease-in;
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    }
+
+    .productGrid {
+      display: grid;
+      gap: 1.5rem;
+      // Responsive grid: 1 col mobile, 2 cols tablet, 3 cols desktop, 4 cols xl
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+
+      @media (min-width: 640px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (min-width: 1024px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      @media (min-width: 1280px) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 640px) {
+    padding: 1rem;
+
+    .container .title {
+      font-size: var(--fs-senary);
+      margin-bottom: 1.5rem;
+    }
+  }
+}

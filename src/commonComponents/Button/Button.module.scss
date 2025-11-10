@@ -48,16 +48,24 @@
   }
 
   &.primary {
-    padding: 7px 12px;
+    padding: 12px 24px;
     background-color: var(--primary-color);
     border: 1px solid transparent;
-    transition: var(--primary-duration);
+    color: var(--white-color);
+    font-size: var(--fs-tertiary);
+    font-weight: var(--fw-quinary);
+    transition: all var(--primary-duration);
+    cursor: pointer;
 
-    &:hover,
+    &:hover:not(.disabled),
     &:global(.active) {
-      background-color: transparent;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px
+        color-mix(in srgb, var(--primary-color) 40%, transparent);
+    }
+
+    &:active:not(.disabled) {
+      transform: translateY(0);
     }
   }
 
@@ -85,6 +93,32 @@
     &:global(.active) {
       background-color: transparent;
       border: 1px solid currentColor;
+    }
+  }
+
+  &.quaternary {
+    padding: 8px 12px;
+    font-size: var(--fs-tertiary);
+    font-weight: var(--fw-medium);
+    color: var(--tertiary-color);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--primary-duration);
+
+    &:hover {
+      color: var(--forty-sixth-color);
+      background-color: color-mix(
+        in srgb,
+        var(--forty-sixth-color) 10%,
+        transparent
+      );
+    }
+
+    &:global(.active) {
+      color: var(--forty-sixth-color);
+      font-weight: var(--fw-septenary);
     }
   }
 }

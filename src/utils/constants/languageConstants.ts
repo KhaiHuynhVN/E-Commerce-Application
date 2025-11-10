@@ -1,6 +1,6 @@
 const languageConstants = {
-   VI: "vi-VN",
-   EN: "en-US",
+  VI: "vi",
+  EN: "en",
 };
 
 export default languageConstants;

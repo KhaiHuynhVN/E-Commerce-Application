@@ -113,6 +113,10 @@ interface NotifyProps {
   resetProgress: boolean;
   /** Custom icons */
   customIcons: CustomIcons | null;
+  /** Màu icon */
+  iconColor?: string;
+  /** Màu progress bar */
+  progressBarColor?: string;
   /** Callback khi freeze */
   onFreeze?: (placement: NotifyPlacement, id: number) => void;
   /** Callback khi unfreeze */
@@ -154,6 +158,10 @@ interface UseNotifyProps {
   placement: NotifyPlacement;
   /** Freeze on hover flag */
   freezeOnHover: boolean;
+  /** Màu icon */
+  iconColor?: string;
+  /** Màu progress bar */
+  progressBarColor?: string;
 }
 
 /** Return value từ useNotify hook */

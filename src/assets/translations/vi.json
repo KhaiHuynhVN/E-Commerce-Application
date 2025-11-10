@@ -12,5 +12,88 @@
     "edit": "Sửa",
     "add": "Thêm",
     "search": "Tìm kiếm"
+  },
+  "login": {
+    "title": "Chào Mừng Trở Lại",
+    "subtitle": "Đăng nhập để tiếp tục",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "loginButton": "Đăng Nhập",
+    "loggingIn": "Đang đăng nhập...",
+    "testAccount": "Tài khoản test",
+    "usernameLabel": "Tên đăng nhập",
+    "passwordLabel": "Mật khẩu"
+  },
+  "serverErrors": {
+    "error": "Lỗi",
+    "unknownError": "Đã xảy ra lỗi không xác định",
+    "Invalid credentials": "Tên đăng nhập hoặc mật khẩu không đúng",
+    "Authentication failed": "Xác thực thất bại, vui lòng thử lại",
+    "User not found": "Không tìm thấy người dùng",
+    "Incorrect username or password": "Tên đăng nhập hoặc mật khẩu không chính xác",
+    "Network Error": "Lỗi kết nối mạng",
+    "Request failed": "Yêu cầu thất bại, vui lòng thử lại"
+  },
+  "validationErrors": {
+    "usernameRequired": "Tên đăng nhập là bắt buộc",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "passwordMinLength": "Mật khẩu phải có ít nhất {{min}} ký tự"
+  },
+  "products": {
+    "title": "Khám Phá Sản Phẩm",
+    "productsFound": "Tìm thấy {{count}} sản phẩm",
+    "productFound": "Tìm thấy {{count}} sản phẩm",
+    "noResults": "Không tìm thấy sản phẩm nào cho \"{{query}}\"",
+    "addToCart": "Thêm vào giỏ",
+    "addingToCart": "Đang thêm...",
+    "addedToCart": "Đã thêm vào giỏ hàng thành công!",
+    "outOfStock": "Hết hàng",
+    "noMoreProducts": "Bạn đã xem hết! Không còn sản phẩm nào để tải thêm."
+  },
+  "header": {
+    "brandName": "E-Shop",
+    "cart": "Giỏ hàng",
+    "logout": "Đăng xuất"
+  },
+  "cart": {
+    "title": "Giỏ Hàng",
+    "emptyCart": "Giỏ hàng của bạn đang trống",
+    "emptyCartHint": "Bắt đầu mua sắm để thêm sản phẩm vào giỏ",
+    "remove": "Xóa",
+    "summary": "Tóm Tắt Đơn Hàng",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "proceedToCheckout": "Tiến Hành Thanh Toán"
+  },
+  "languages": {
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt"
+  },
+  "pendingMessages": {
+    "loginInProgress": "Đang đăng nhập, vui lòng chờ...",
+    "getCurrentUserInProgress": "Đang tải thông tin người dùng, vui lòng chờ...",
+    "refreshTokenInProgress": "Đang làm mới token, vui lòng chờ...",
+    "getProductsInProgress": "Đang tải sản phẩm, vui lòng chờ...",
+    "searchProductsInProgress": "Đang tìm kiếm sản phẩm, vui lòng chờ...",
+    "getProductByIdInProgress": "Đang tải chi tiết sản phẩm, vui lòng chờ...",
+    "getCategoriesInProgress": "Đang tải danh mục, vui lòng chờ...",
+    "addToCartInProgress": "Đang thêm vào giỏ hàng, vui lòng chờ...",
+    "updateCartInProgress": "Đang cập nhật giỏ hàng, vui lòng chờ...",
+    "getCartInProgress": "Đang tải giỏ hàng, vui lòng chờ...",
+    "deleteCartInProgress": "Đang xóa giỏ hàng, vui lòng chờ..."
+  },
+  "pendingErrors": {
+    "loginInProgress": "Yêu cầu đăng nhập đang được xử lý",
+    "getCurrentUserInProgress": "Yêu cầu lấy thông tin người dùng đang được xử lý",
+    "refreshTokenInProgress": "Yêu cầu làm mới token đang được xử lý",
+    "getProductsInProgress": "Yêu cầu tải sản phẩm đang được xử lý",
+    "searchProductsInProgress": "Yêu cầu tìm kiếm sản phẩm đang được xử lý",
+    "getProductByIdInProgress": "Yêu cầu tải chi tiết sản phẩm đang được xử lý",
+    "getCategoriesInProgress": "Yêu cầu tải danh mục đang được xử lý",
+    "addToCartInProgress": "Yêu cầu thêm vào giỏ hàng đang được xử lý",
+    "updateCartInProgress": "Yêu cầu cập nhật giỏ hàng đang được xử lý",
+    "getCartInProgress": "Yêu cầu tải giỏ hàng đang được xử lý",
+    "deleteCartInProgress": "Yêu cầu xóa giỏ hàng đang được xử lý"
   }
 }
