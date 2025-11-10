@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import classNames from "classnames/bind";
 
 import { createLoginSchema } from "@/utils";
-import { authService } from "@/services";
+import { authService, authTokenService } from "@/services";
 import {
   authActions,
   authSelectors,
@@ -69,6 +69,10 @@ const LoginPage = () => {
 
       // Gọi API login
       const response = await authService.login(data);
+
+      // Store access token và refresh token
+      const { accessToken, refreshToken } = response;
+      authTokenService.setTokens(accessToken, refreshToken);
 
       // Lưu thông tin user vào Redux
       dispatch(authActions.setAuth(response));

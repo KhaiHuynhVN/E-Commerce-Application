@@ -1,4 +1,4 @@
-export { authService } from "./authServices";
+export { authService, authTokenService } from "./authServices";
 export type { LoginRequest, LoginResponse, AuthError } from "./authServices";
 
 export { productsService } from "./productsServices";
