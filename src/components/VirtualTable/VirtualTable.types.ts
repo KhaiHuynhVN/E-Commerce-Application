@@ -749,10 +749,6 @@ interface ScrollbarCornerProps {
   style?: React.CSSProperties;
 }
 
-// =====================================================
-// EXPORTS - Xuất tất cả các types
-// =====================================================
-
 export type {
   // Shared types
   ClassNameBindingFunction,

@@ -1,11 +1,11 @@
-import PropTypes from "prop-types";
-
-const NoHeaderAndFooterLayout = ({ children }) => {
-   return <div>{children}</div>;
+type NoHeaderAndFooterLayoutProps = {
+  children: React.ReactNode;
 };
 
-NoHeaderAndFooterLayout.propTypes = {
-   children: PropTypes.node.isRequired,
+const NoHeaderAndFooterLayout = ({
+  children,
+}: NoHeaderAndFooterLayoutProps) => {
+  return <div>{children}</div>;
 };
 
 export default NoHeaderAndFooterLayout;

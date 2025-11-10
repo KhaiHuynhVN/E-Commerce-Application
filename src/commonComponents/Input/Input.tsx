@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Input.module.scss";
 import useInput from "./useInput";
 import type { InputProps } from "./Input.types";
+import { memo } from "react";
 
 const cx = classNames.bind(styles);
 
@@ -125,4 +126,4 @@ const Input = ({
   );
 };
 
-export default Input;
+export default memo(Input);

@@ -1,1 +1,1 @@
-// export { default as translationConfig } from "./translationConfig";
+export { default as translationConfig } from "./translationConfig";

@@ -5,6 +5,7 @@ import {
   type ReactNode,
   type Ref,
   type MouseEvent,
+  memo,
 } from "react";
 import classNames from "classnames/bind";
 
@@ -149,4 +150,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default memo(Button);

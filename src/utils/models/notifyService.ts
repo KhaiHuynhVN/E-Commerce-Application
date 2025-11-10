@@ -143,6 +143,14 @@ class NotifyService {
   }
 
   /**
+   * Getter để lấy giá trị maxStack
+   * @returns Giá trị maxStack hiện tại
+   */
+  get getMaxStack(): number {
+    return this.maxStack;
+  }
+
+  /**
    * Thêm một thông báo mới
    * @param message - Nội dung thông báo
    * @param options - Các tùy chọn cho thông báo

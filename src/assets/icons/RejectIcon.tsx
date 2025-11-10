@@ -1,0 +1,32 @@
+import type { SvgIconProps } from "@/utils/types";
+
+const RejectIcon = ({
+  className,
+  width = "30",
+  height = "30",
+  fill = "currentColor",
+  stroke = "",
+  strokeWidth = "",
+}: SvgIconProps) => (
+  <svg
+    className={className}
+    width={width}
+    height={height}
+    fill={fill}
+    stroke={stroke}
+    strokeWidth={strokeWidth}
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 512 512"
+    xmlSpace="preserve"
+  >
+    <g>
+      <path
+        d="M256 0C114.837 0 0 114.837 0 256s114.837 256 256 256 256-114.837 256-256S397.163 0 256 0zm111.963 331.762c10 10 10 26.212 0 36.212-5 4.988-11.55 7.487-18.1 7.487s-13.1-2.5-18.1-7.487L256 292.2l-75.762 75.775c-5 4.988-11.55 7.487-18.1 7.487s-13.1-2.5-18.1-7.487c-10-10-10-26.212 0-36.212L219.8 256l-75.762-75.762c-10-10-10-26.213 0-36.213 10-9.988 26.2-9.988 36.2 0L256 219.8l75.762-75.775c10-9.988 26.2-9.988 36.2 0 10 10 10 26.213 0 36.213L292.2 256z"
+        fill={fill}
+      ></path>
+    </g>
+  </svg>
+);
+
+export default RejectIcon;

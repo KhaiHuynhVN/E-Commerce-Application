@@ -1,194 +1,221 @@
-import { cloneElement, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  cloneElement,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import type React from "react";
 
 import { Icons } from "../../../../assets";
+import type {
+  UseNotifyProps,
+  UseNotifyReturn,
+} from "../../NotifyContainer.types";
 
 const useNotify = ({
-   cx,
-   id,
-   duration,
-   resetProgress,
-   promise,
-   updateDimensions,
-   promiseState,
-   onClose,
-   onFreeze,
-   onUnfreeze,
-   customIcons,
-   type,
-   stack,
-   placement,
-   freezeOnHover,
-}) => {
-   const [isVisible, setIsVisible] = useState(true);
-   const [isVisibleLoadIcon, setIsVisibleLoadIcon] = useState(true);
+  cx,
+  id,
+  duration,
+  resetProgress,
+  promise,
+  updateDimensions,
+  promiseState,
+  onClose,
+  onFreeze,
+  onUnfreeze,
+  customIcons,
+  type,
+  stack,
+  placement,
+  freezeOnHover,
+}: UseNotifyProps): UseNotifyReturn => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [isVisibleLoadIcon, setIsVisibleLoadIcon] = useState(true);
 
-   const rootRef = useRef(null);
-   const progressBarRef = useRef(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
-   useLayoutEffect(() => {
-      if (rootRef.current) {
-         const { offsetWidth, offsetHeight } = rootRef.current;
+  useLayoutEffect(() => {
+    if (rootRef.current) {
+      const { offsetWidth, offsetHeight } = rootRef.current;
 
-         updateDimensions(id, offsetWidth, offsetHeight);
-      }
-   }, [id, updateDimensions, promiseState]);
+      updateDimensions(id, offsetWidth, offsetHeight);
+    }
+  }, [id, updateDimensions, promiseState]);
 
-   useEffect(() => {
-      if (rootRef.current) {
-         rootRef.current.style.setProperty("--timer-progress-bar", `${duration}ms`);
-      }
-      if (resetProgress && progressBarRef.current && !promise) {
-         // Chỉ reset animation nếu không phải là promise
-         progressBarRef.current.style.animation = "none";
-         progressBarRef.current.offsetHeight; // Trigger reflow
-         progressBarRef.current.style.animation = null;
-      }
-   }, [duration, resetProgress, promise]);
+  useEffect(() => {
+    if (rootRef.current) {
+      rootRef.current.style.setProperty(
+        "--timer-progress-bar",
+        `${duration}ms`
+      );
+    }
+    if (resetProgress && progressBarRef.current && !promise) {
+      // Chỉ reset animation nếu không phải là promise
+      progressBarRef.current.style.animation = "none";
+      void progressBarRef.current.offsetHeight; // Trigger reflow
+      progressBarRef.current.style.animation = "";
+    }
+  }, [duration, resetProgress, promise]);
 
-   const handleAnimationStart = (e) => {
-      e.target.classList.add(cx("disable-pointer-events"));
-   };
+  const handleAnimationStart = (
+    e: React.AnimationEvent<HTMLDivElement>
+  ): void => {
+    e.currentTarget.classList.add(cx("disable-pointer-events"));
+  };
 
-   const handleAnimationEnd = (e) => {
-      e.target.classList.remove(cx("disable-pointer-events"));
+  const handleAnimationEnd = (
+    e: React.AnimationEvent<HTMLDivElement>
+  ): void => {
+    e.currentTarget.classList.remove(cx("disable-pointer-events"));
 
-      if (!e.target.classList.contains(cx("hide")) && stack) {
-         e.target.classList.add("stacked");
-      }
+    if (!e.currentTarget.classList.contains(cx("hide")) && stack) {
+      e.currentTarget.classList.add("stacked");
+    }
 
-      if (e.target.classList.contains(cx("hide"))) {
-         setIsVisible(false);
-         onClose(id);
-      }
-   };
+    if (e.currentTarget.classList.contains(cx("hide"))) {
+      setIsVisible(false);
+      onClose(id);
+    }
+  };
 
-   const handleClose = () => {
-      rootRef.current.classList.add(cx("disable-pointer-events"));
-      rootRef.current.style.animationPlayState = "running";
+  const handleClose = (): void => {
+    if (!rootRef.current) return;
 
-      if (promise && promiseState === "pending") {
-         // Không cho phép đóng khi promise đang pending
-         return;
-      }
-      rootRef.current.classList.add(cx("hide"));
-      rootRef.current.classList.remove("stacked");
-   };
+    rootRef.current.classList.add(cx("disable-pointer-events"));
+    rootRef.current.style.animationPlayState = "running";
 
-   const handleProgressBarAnimationEnd = () => {
-      handleClose();
-   };
+    if (promise && promiseState === "pending") {
+      // Không cho phép đóng khi promise đang pending
+      return;
+    }
+    rootRef.current.classList.add(cx("hide"));
+    rootRef.current.classList.remove("stacked");
+  };
 
-   const handleMouseEnter = () => {
-      if (freezeOnHover && onFreeze) {
-         onFreeze(placement, id);
-      }
-   };
+  const handleProgressBarAnimationEnd = (): void => {
+    handleClose();
+  };
 
-   const handleMouseLeave = () => {
-      if (freezeOnHover && onUnfreeze) {
-         onUnfreeze(placement, id);
-      }
-   };
+  const handleMouseEnter = (): void => {
+    if (freezeOnHover && onFreeze) {
+      onFreeze(placement, id);
+    }
+  };
 
-   const handleLoadIconTransitionEnd = (e) => {
-      if (e.target.classList.contains(cx("hide-load-icon"))) {
-         setIsVisibleLoadIcon(false);
-      }
-   };
+  const handleMouseLeave = (): void => {
+    if (freezeOnHover && onUnfreeze) {
+      onUnfreeze(placement, id);
+    }
+  };
 
-   const renderIcon = () => {
-      const CustomIcon = customIcons && customIcons[type];
+  const handleLoadIconTransitionEnd = (
+    e: React.TransitionEvent<HTMLDivElement>
+  ): void => {
+    if (e.currentTarget.classList.contains(cx("hide-load-icon"))) {
+      setIsVisibleLoadIcon(false);
+    }
+  };
 
-      if (CustomIcon) {
-         return cloneElement(CustomIcon, {
-            className: cx(CustomIcon.props.className, "icon", {
-               "text-primary-color": type === "info",
-               "text-fortieth-color": type === "success",
-               "text-thirty-ninth-color": type === "reject" || type === "error",
-               "text-thirty-fifth-color": type === "warning",
-               "show-icon": promise && promiseState !== "pending",
-               "not-promise": !promise,
-            }),
-            width: CustomIcon.props.width || "30",
-            height: CustomIcon.props.height || "30",
-         });
-      }
+  const renderIcon = (): React.ReactNode => {
+    const CustomIcon = customIcons && customIcons[type];
 
-      switch (type) {
-         case "info":
-            return (
-               <Icons.NotifyIcon
-                  className={cx("icon", "text-primary-color", {
-                     "show-icon": promise && promiseState !== "pending",
-                     "not-promise": !promise,
-                  })}
-                  width="30"
-                  height="30"
-               />
-            );
-         case "success":
-            return (
-               <Icons.CheckedIcon
-                  className={cx("icon", "text-fortieth-color", {
-                     "show-icon": promise && promiseState === "fulfilled",
-                     "not-promise": !promise,
-                  })}
-                  width="30"
-                  height="30"
-               />
-            );
-         case "reject":
-            return (
-               <Icons.RejectIcon
-                  className={cx("icon", "text-thirty-ninth-color", {
-                     "show-icon": promise && promiseState === "rejected",
-                     "not-promise": !promise,
-                  })}
-                  width="30"
-                  height="30"
-               />
-            );
-         case "warning":
-            return (
-               <Icons.WarningIcon
-                  className={cx("icon", "text-thirty-fifth-color", {
-                     "show-icon": promise && promiseState !== "pending",
-                     "not-promise": !promise,
-                  })}
-                  width="30"
-                  height="30"
-               />
-            );
-         case "error":
-            return (
-               <Icons.ErrorIcon
-                  className={cx("icon", "text-thirty-ninth-color", {
-                     "show-icon": promise && promiseState !== "pending",
-                     "not-promise": !promise,
-                  })}
-                  width="30"
-                  height="30"
-               />
-            );
-         default:
-            return null;
-      }
-   };
+    if (CustomIcon && typeof CustomIcon === "object" && "props" in CustomIcon) {
+      const iconElement = CustomIcon as React.ReactElement<{
+        className?: string;
+        width?: string;
+        height?: string;
+      }>;
+      return cloneElement(iconElement, {
+        className: cx(iconElement.props.className, "icon", {
+          "text-primary-color": type === "info",
+          "text-fortieth-color": type === "success",
+          "text-thirty-ninth-color": type === "reject" || type === "error",
+          "text-thirty-fifth-color": type === "warning",
+          "show-icon": promise && promiseState !== "pending",
+          "not-promise": !promise,
+        }),
+        width: iconElement.props.width || "30",
+        height: iconElement.props.height || "30",
+      });
+    }
 
-   return {
-      isVisible,
-      rootRef,
-      progressBarRef,
-      handleAnimationStart,
-      handleAnimationEnd,
-      handleMouseEnter,
-      handleMouseLeave,
-      handleLoadIconTransitionEnd,
-      handleProgressBarAnimationEnd,
-      handleClose,
-      renderIcon,
-      isVisibleLoadIcon,
-   };
+    switch (type) {
+      case "info":
+        return (
+          <Icons.NotifyIcon
+            className={cx("icon", "text-primary-color", {
+              "show-icon": promise && promiseState !== "pending",
+              "not-promise": !promise,
+            })}
+            width="30"
+            height="30"
+          />
+        );
+      case "success":
+        return (
+          <Icons.CheckedIcon
+            className={cx("icon", "text-fortieth-color", {
+              "show-icon": promise && promiseState === "fulfilled",
+              "not-promise": !promise,
+            })}
+            width="30"
+            height="30"
+          />
+        );
+      case "reject":
+        return (
+          <Icons.RejectIcon
+            className={cx("icon", "text-thirty-ninth-color", {
+              "show-icon": promise && promiseState === "rejected",
+              "not-promise": !promise,
+            })}
+            width="30"
+            height="30"
+          />
+        );
+      case "warning":
+        return (
+          <Icons.WarningIcon
+            className={cx("icon", "text-thirty-fifth-color", {
+              "show-icon": promise && promiseState !== "pending",
+              "not-promise": !promise,
+            })}
+            width="30"
+            height="30"
+          />
+        );
+      case "error":
+        return (
+          <Icons.ErrorIcon
+            className={cx("icon", "text-thirty-ninth-color", {
+              "show-icon": promise && promiseState !== "pending",
+              "not-promise": !promise,
+            })}
+            width="30"
+            height="30"
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return {
+    isVisible,
+    rootRef,
+    progressBarRef,
+    handleAnimationStart,
+    handleAnimationEnd,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleLoadIconTransitionEnd,
+    handleProgressBarAnimationEnd,
+    handleClose,
+    renderIcon,
+    isVisibleLoadIcon,
+  };
 };
 
 export default useNotify;

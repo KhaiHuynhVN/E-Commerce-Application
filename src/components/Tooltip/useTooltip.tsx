@@ -3,6 +3,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { getOptimalPlacement, getTooltipPosition } from "./tooltipHelpers";
 import TooltipManager from "./tooltipManager";
+import type {
+  UseTooltipProps,
+  UseTooltipReturn,
+  TooltipPositionResult,
+} from "./Tooltip.types";
 
 const useTooltip = ({
   open,
@@ -27,19 +32,22 @@ const useTooltip = ({
   margin,
   container,
   arrow,
-}) => {
+}: UseTooltipProps): UseTooltipReturn => {
   const [isVisible, setIsVisible] = useState(open || false);
   const [shouldRender, setShouldRender] = useState(open || false);
-  const [tooltipStyle, setTooltipStyle] = useState({ position: {}, shift: 0 });
+  const [tooltipStyle, setTooltipStyle] = useState<TooltipPositionResult>({
+    position: { position: "fixed", left: "0px", top: "0px" },
+    shift: 0,
+  });
   const [currentPlacement, setCurrentPlacement] = useState(placement);
   const [initialPlacement] = useState(placement);
   const [isPositionCalculated, setIsPositionCalculated] = useState(false);
 
   const mousePositionRef = useRef({ x: 0, y: 0 });
-  const childRef = useRef(null);
-  const innerTooltipRef = useRef(null);
-  const showTimeoutRef = useRef(null);
-  const hideTimeoutRef = useRef(null);
+  const childRef = useRef<HTMLElement>(null);
+  const innerTooltipRef = useRef<HTMLDivElement>(null);
+  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
 
   const isControlled = open !== undefined;
@@ -66,22 +74,25 @@ const useTooltip = ({
     if (recalculateKey === null || recalculateKey === undefined) return;
 
     if (shouldShow && childRef.current && innerTooltipRef.current) {
+      const containerElement =
+        (container && "current" in container ? container.current : container) ||
+        null;
       const nextPlacement = getOptimalPlacement(
         childRef.current,
         innerTooltipRef.current,
         keepPlacement ? currentPlacement : initialPlacement,
         actualOffset,
-        container?.current || container,
+        containerElement,
         margin
       );
 
       if (nextPlacement !== currentPlacement) {
-        setCurrentPlacement(nextPlacement);
+        setCurrentPlacement(nextPlacement as typeof placement);
       }
 
       const { position, shift } = getTooltipPosition(
         childRef.current,
-        container?.current || container,
+        containerElement,
         nextPlacement,
         actualOffset,
         innerTooltipRef.current,
@@ -96,22 +107,26 @@ const useTooltip = ({
   useLayoutEffect(() => {
     if (shouldShow) {
       if (childRef.current && innerTooltipRef.current) {
+        const containerElement =
+          (container && "current" in container
+            ? container.current
+            : container) || null;
         const nextPlacement = getOptimalPlacement(
           childRef.current,
           innerTooltipRef.current,
           keepPlacement ? currentPlacement : initialPlacement,
           actualOffset,
-          container?.current || container,
+          containerElement,
           margin
         );
 
         if (nextPlacement !== currentPlacement) {
-          setCurrentPlacement(nextPlacement);
+          setCurrentPlacement(nextPlacement as typeof placement);
         }
 
         const { position, shift } = getTooltipPosition(
           childRef.current,
-          container?.current || container,
+          containerElement,
           nextPlacement,
           actualOffset,
           innerTooltipRef.current,
@@ -136,11 +151,11 @@ const useTooltip = ({
   // useEffect để handle click outside
   useEffect(() => {
     if (isControlled && closeOnClickOutside && shouldShow) {
-      const handleClickOutside = (event) => {
+      const handleClickOutside = (event: MouseEvent): void => {
         // Kiểm tra xem click có nằm trong tooltip hiện tại không
         const isClickInsideCurrentTooltip =
-          childRef.current?.contains(event.target) ||
-          innerTooltipRef.current?.contains(event.target);
+          childRef.current?.contains(event.target as Node) ||
+          innerTooltipRef.current?.contains(event.target as Node);
 
         // Nếu click inside tooltip hiện tại, không làm gì cả
         if (isClickInsideCurrentTooltip) return;
@@ -242,7 +257,7 @@ const useTooltip = ({
 
   // Tách riêng effect để lắng nghe mousemove
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent): void => {
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
     };
 
@@ -255,7 +270,7 @@ const useTooltip = ({
   // useEffect xử lý scroll và resize
   useEffect(() => {
     if (shouldRender) {
-      let rafId;
+      let rafId: number | undefined;
       let lastScrollTime = 0;
       const scrollThreshold = 16; // ~60fps
 
@@ -263,7 +278,10 @@ const useTooltip = ({
         if (childRef.current && innerTooltipRef.current) {
           // Sử dụng requestAnimationFrame để đồng bộ với frame tiếp theo
           requestAnimationFrame(() => {
-            const containerElement = container?.current || container;
+            const containerElement =
+              (container && "current" in container
+                ? container.current
+                : container) || null;
             // Chỉ áp dụng calculatePositionBasedOnWindow khi có container
             const targetContainer =
               containerElement && calculatePositionBasedOnWindow
@@ -281,7 +299,7 @@ const useTooltip = ({
             );
 
             if (nextPlacement !== currentPlacement) {
-              setCurrentPlacement(nextPlacement);
+              setCurrentPlacement(nextPlacement as typeof placement);
             }
 
             const { position, shift } = getTooltipPosition(
@@ -366,9 +384,11 @@ const useTooltip = ({
   }, [isControlled]);
 
   // Hàm cập nhật vị trí
-  const updatePosition = () => {
+  const updatePosition = (): void => {
     if (childRef.current && innerTooltipRef.current) {
-      const containerElement = container?.current || container;
+      const containerElement =
+        (container && "current" in container ? container.current : container) ||
+        null;
       // Chỉ áp dụng calculatePositionBasedOnWindow khi có container
       const targetContainer =
         containerElement && calculatePositionBasedOnWindow
@@ -385,7 +405,7 @@ const useTooltip = ({
       );
 
       if (nextPlacement !== currentPlacement) {
-        setCurrentPlacement(nextPlacement);
+        setCurrentPlacement(nextPlacement as typeof placement);
       }
 
       const { position, shift } = getTooltipPosition(
@@ -403,7 +423,7 @@ const useTooltip = ({
   };
 
   // Cập nhật handleVisibilityChange
-  const handleVisibilityChange = (show) => {
+  const handleVisibilityChange = (show: boolean): void => {
     // biến để theo dõi trạng thái trước đó
     const wasVisible = isVisible;
 
@@ -500,7 +520,7 @@ const useTooltip = ({
     return isOverChild || isOverTooltip || isOverRelated;
   };
 
-  const handleAnimationEnd = (e) => {
+  const handleAnimationEnd = (e: React.AnimationEvent): void => {
     if (e.animationName.includes("show") && !isControlled) {
       // Kiểm tra ngay lập tức sau khi animation show hoàn thành
       if (!isMouseOverElements()) {
@@ -537,7 +557,7 @@ const useTooltip = ({
     }
   };
 
-  const handleTooltipMouseLeave = (e) => {
+  const handleTooltipMouseLeave = (e: React.MouseEvent): void => {
     if (interactive && !isControlled) {
       // Kiểm tra xem chuột có đang hover vào element gốc không
       const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
@@ -550,13 +570,13 @@ const useTooltip = ({
     }
   };
 
-  const handleMouseEnter = (e) => {
-    if (!e.currentTarget.contains(e.target)) return;
+  const handleMouseEnter = (e: React.MouseEvent): void => {
+    if (!e.currentTarget.contains(e.target as Node)) return;
     showTooltip();
   };
 
-  const handleMouseLeave = (e) => {
-    if (!e.currentTarget.contains(e.target)) return;
+  const handleMouseLeave = (e: React.MouseEvent): void => {
+    if (!e.currentTarget.contains(e.target as Node)) return;
     if (showTimeoutRef.current) {
       clearTimeout(showTimeoutRef.current);
       showTimeoutRef.current = null;
@@ -568,8 +588,8 @@ const useTooltip = ({
     hideTooltip();
   };
 
-  const handleMouseMove = (e) => {
-    if (!e.currentTarget.contains(e.target)) return;
+  const handleMouseMove = (e: React.MouseEvent): void => {
+    if (!e.currentTarget.contains(e.target as Node)) return;
     if (showOnMouseMove) {
       if (!isVisible && !isControlled && !showTimeoutRef.current) {
         handleVisibilityChange(true);
@@ -592,8 +612,8 @@ const useTooltip = ({
     handleMouseEnter,
     handleMouseLeave,
     handleMouseMove,
-    childRef,
-    innerTooltipRef,
+    childRef: childRef as React.RefObject<HTMLElement>,
+    innerTooltipRef: innerTooltipRef as React.RefObject<HTMLDivElement>,
     tooltipStyle,
     currentPlacement,
     shouldRender,

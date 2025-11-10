@@ -1,10 +1,10 @@
 import { cloneElement, memo } from "react";
 import { createPortal } from "react-dom";
-import propTypes from "prop-types";
 import classNames from "classnames/bind";
 
-import { ANIMATIONS, getArrowPosition, PLACEMENTS } from "./tooltipHelpers";
+import { ANIMATIONS, getArrowPosition } from "./tooltipHelpers";
 import useTooltip from "./useTooltip";
+import type { TooltipProps, AnimationType } from "./Tooltip.types";
 
 import styles from "./Tooltip.module.scss";
 
@@ -93,7 +93,7 @@ const Tooltip = ({
   spacing = 4,
   margin = 8,
   allowAnimation = true,
-  animation = ANIMATIONS.FADE,
+  animation = ANIMATIONS.FADE as AnimationType,
   showDelay = 0,
   hideDelay = 0,
   interactive = false,
@@ -108,7 +108,7 @@ const Tooltip = ({
   calculatePositionBasedOnWindow = false,
   disabled = false,
   offsetPosition = { x: 0, y: 0 },
-}) => {
+}: TooltipProps): React.ReactElement => {
   const {
     isVisible,
     handleMouseEnter,
@@ -148,12 +148,15 @@ const Tooltip = ({
     arrow,
   });
 
-  const childElement = cloneElement(children, {
-    ref: childRef,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
-    onMouseMove: handleMouseMove,
-  });
+  const childElement = cloneElement(
+    children as React.ReactElement<Record<string, unknown>>,
+    {
+      ref: childRef,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onMouseMove: handleMouseMove,
+    }
+  );
 
   const tooltipContent =
     shouldRender &&
@@ -201,7 +204,8 @@ const Tooltip = ({
           )}
         </div>
       </div>,
-      container?.current || container || document.body
+      (container && "current" in container ? container.current : container) ||
+        document.body
     );
 
   return (
@@ -210,39 +214,6 @@ const Tooltip = ({
       {tooltipContent}
     </>
   );
-};
-
-Tooltip.propTypes = {
-  children: propTypes.node.isRequired,
-  content: propTypes.node.isRequired,
-  placement: propTypes.oneOf(Object.values(PLACEMENTS)),
-  open: propTypes.bool,
-  container: propTypes.object,
-  arrow: propTypes.bool,
-  className: propTypes.string,
-  arrowClassName: propTypes.string,
-  keepPlacement: propTypes.bool,
-  spacing: propTypes.number,
-  margin: propTypes.number,
-  animation: propTypes.oneOf(Object.values(ANIMATIONS)),
-  allowAnimation: propTypes.bool,
-  showDelay: propTypes.number,
-  hideDelay: propTypes.number,
-  interactive: propTypes.bool,
-  tooltipKey: propTypes.string,
-  relatedTooltipKeys: propTypes.arrayOf(propTypes.string),
-  showOnMouseMove: propTypes.bool,
-  tooltipRef: propTypes.object,
-  closeOnClickOutside: propTypes.bool,
-  setOpen: propTypes.func,
-  onClose: propTypes.func,
-  recalculateKey: propTypes.any,
-  calculatePositionBasedOnWindow: propTypes.bool,
-  disabled: propTypes.bool,
-  offsetPosition: propTypes.shape({
-    x: propTypes.number,
-    y: propTypes.number,
-  }),
 };
 
 export default memo(Tooltip);

@@ -8,3 +8,7 @@ export { default as CloseIcon } from "./CloseIcon";
 export { default as EyeCloseIcon } from "./EyeCloseIcon";
 export { default as EyeOpenIcon } from "./EyeOpenIcon";
 export { default as CheckedIcon } from "./CheckedIcon";
+export { default as ErrorIcon } from "./ErrorIcon";
+export { default as NotifyIcon } from "./NotifyIcon";
+export { default as RejectIcon } from "./RejectIcon";
+export { default as WarningIcon } from "./WarningIcon";

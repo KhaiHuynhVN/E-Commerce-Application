@@ -1,31 +1,30 @@
 import { useTranslation } from "react-i18next";
 
-import { globalService as glb_sv, storeKey as STORE_KEY, languageConstants } from "../../utils";
+import { languageConstants, commonConstants } from "../../utils";
 
 const useLanguage = () => {
-   const { i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
-   const changeLanguage = (lang = languageConstants.EN) => {
-      localStorage.setItem(STORE_KEY.LANGUAGE, lang);
-      i18n.changeLanguage(lang);
-      glb_sv.language = lang;
-   };
+  const changeLanguage = (lang = languageConstants.EN) => {
+    localStorage.setItem(commonConstants.LANGUAGE, lang);
+    i18n.changeLanguage(lang);
+  };
 
-   const initLanguage = () => {
-      const langStore = localStorage.getItem(STORE_KEY.LANGUAGE);
+  const initLanguage = () => {
+    const langStore = localStorage.getItem(commonConstants.LANGUAGE);
 
-      if (!langStore || !Object.values(languageConstants).includes(langStore)) {
-         changeLanguage(languageConstants.EN);
-      } else {
-         changeLanguage(langStore);
-      }
-   };
+    if (!langStore || !Object.values(languageConstants).includes(langStore)) {
+      changeLanguage(languageConstants.EN);
+    } else {
+      changeLanguage(langStore);
+    }
+  };
 
-   return {
-      changeLanguage,
-      initLanguage,
-      currentLanguage: i18n.language,
-   };
+  return {
+    changeLanguage,
+    initLanguage,
+    currentLanguage: i18n.language,
+  };
 };
 
 export default useLanguage;

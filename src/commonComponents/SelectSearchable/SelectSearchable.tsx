@@ -196,7 +196,7 @@ const SelectSearchable = ({
     }
     // Cho phép các giá trị trong alwaysShowValues hiển thị ngay cả khi dataLoaded=false
     return dataLoaded
-      ? fuzzySearch(input, option.label)
+      ? fuzzySearch(input, String(option.label ?? ""))
       : alwaysShowValues.includes(option.value);
   };
 

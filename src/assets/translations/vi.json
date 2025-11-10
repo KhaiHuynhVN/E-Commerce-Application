@@ -1,0 +1,16 @@
+{
+  "common": {
+    "welcome": "Chào mừng",
+    "hello": "Xin chào",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "search": "Tìm kiếm"
+  }
+}

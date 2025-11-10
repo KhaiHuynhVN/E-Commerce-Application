@@ -82,14 +82,21 @@ const ANIMATIONS = {
  *    - Xử lý scroll của container
  */
 function getTooltipPosition(
-  element,
-  container,
-  placement,
-  spacing = 8,
-  tooltipElement,
-  offset = { x: 0, y: 0 }
-) {
-  if (!element || !tooltipElement) return { position: {}, shift: 0 };
+  element: HTMLElement | null,
+  container: HTMLElement | null,
+  placement: string,
+  spacing: number = 8,
+  tooltipElement: HTMLElement | null,
+  offset: { x: number; y: number } = { x: 0, y: 0 }
+): {
+  position: { position: "fixed" | "absolute"; left: string; top: string };
+  shift: number;
+} {
+  if (!element || !tooltipElement)
+    return {
+      position: { position: "fixed" as const, left: "0px", top: "0px" },
+      shift: 0,
+    };
 
   const elementRect = element.getBoundingClientRect();
   const tooltipRect = tooltipElement.getBoundingClientRect();
@@ -196,7 +203,7 @@ function getTooltipPosition(
       placement === PLACEMENTS.left ||
       placement === PLACEMENTS.right;
 
-    if (container) {
+    if (container && containerRect) {
       // Tính toán vị trí tương đối với container
       x = x - containerRect.left + container.scrollLeft;
       y = y - containerRect.top + container.scrollTop;
@@ -248,7 +255,7 @@ function getTooltipPosition(
 
       return {
         position: {
-          position: "absolute",
+          position: "absolute" as const,
           left: `${Math.round(x)}px`,
           top: `${Math.round(y)}px`,
         },
@@ -296,7 +303,7 @@ function getTooltipPosition(
 
       return {
         position: {
-          position: "fixed",
+          position: "fixed" as const,
           left: `${Math.round(x)}px`,
           top: `${Math.round(y)}px`,
         },
@@ -324,7 +331,11 @@ function getTooltipPosition(
  *    - Sử dụng rotate(45deg) để tạo hình mũi tên
  *    - Điều chỉnh vị trí dựa trên placement
  */
-function getArrowPosition(placement, tooltipRect, elementRect) {
+function getArrowPosition(
+  placement: string,
+  tooltipRect: DOMRect | null,
+  elementRect: DOMRect | null
+): Record<string, string | number> {
   if (!tooltipRect || !elementRect) return {};
 
   const arrowSize = 4;
@@ -432,13 +443,17 @@ function getArrowPosition(placement, tooltipRect, elementRect) {
   const position = positions[placement];
 
   // Chuyển đổi các giá trị số thành chuỗi px
-  Object.keys(position).forEach((key) => {
-    if (typeof position[key] === "number") {
-      position[key] = `${position[key]}px`;
+  const result: Record<string, string> = {};
+  Object.keys(position).forEach((key: string) => {
+    const value = position[key as keyof typeof position];
+    if (typeof value === "number") {
+      result[key] = `${value}px`;
+    } else if (value !== undefined) {
+      result[key] = value;
     }
   });
 
-  return position;
+  return result;
 }
 
 /**
@@ -465,13 +480,13 @@ function getArrowPosition(placement, tooltipRect, elementRect) {
  *    - Tương tự cho các trường hợp khác
  */
 function getOptimalPlacement(
-  element,
-  tooltipElement,
-  placement,
-  spacing = 8,
-  container,
-  margin = 8
-) {
+  element: HTMLElement | null,
+  tooltipElement: HTMLElement | null,
+  placement: string,
+  spacing: number = 8,
+  container: HTMLElement | null,
+  margin: number = 8
+): string {
   if (!element || !tooltipElement) return placement;
 
   const elementRect = element.getBoundingClientRect();
@@ -535,13 +550,14 @@ function getOptimalPlacement(
   };
 
   // Kiểm tra và trả về placement thay thế nếu cần
-  if (placement.includes("top") && isBlocked.top) return fallbackMap[placement];
+  if (placement.includes("top") && isBlocked.top)
+    return fallbackMap[placement as keyof typeof fallbackMap];
   if (placement.includes("bottom") && isBlocked.bottom)
-    return fallbackMap[placement];
+    return fallbackMap[placement as keyof typeof fallbackMap];
   if (placement.includes("left") && isBlocked.left)
-    return fallbackMap[placement];
+    return fallbackMap[placement as keyof typeof fallbackMap];
   if (placement.includes("right") && isBlocked.right)
-    return fallbackMap[placement];
+    return fallbackMap[placement as keyof typeof fallbackMap];
 
   return placement;
 }

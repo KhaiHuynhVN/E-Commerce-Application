@@ -2,41 +2,60 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
-const usePaginationHandle = ({ param, onPageChange, query, validQueries = [] }) => {
-   const [searchParams, setSearchParams] = useSearchParams();
-   const params = useParams();
-   const currentSearchParams = new URLSearchParams(searchParams);
+import type {
+  UsePaginationHandleProps,
+  UsePaginationHandleReturn,
+} from "./usePaginationHandle.types";
 
-   useEffect(() => {
-      if (validQueries.length === 0) return;
+const usePaginationHandle = ({
+  param,
+  onPageChange,
+  query,
+  validQueries = [],
+}: UsePaginationHandleProps): UsePaginationHandleReturn => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = useParams();
+  const currentSearchParams = new URLSearchParams(searchParams);
 
-      let hasInvalidQuery = false;
-      for (const key of currentSearchParams.keys()) {
-         if (!validQueries.includes(key)) {
-            currentSearchParams.delete(key);
-            hasInvalidQuery = true;
-         }
+  useEffect(() => {
+    if (validQueries.length === 0) return;
+
+    let hasInvalidQuery = false;
+    for (const key of currentSearchParams.keys()) {
+      if (!validQueries.includes(key)) {
+        currentSearchParams.delete(key);
+        hasInvalidQuery = true;
       }
+    }
 
-      if (hasInvalidQuery) {
-         setSearchParams(currentSearchParams, { replace: true });
-      }
-   }, [validQueries]);
+    if (hasInvalidQuery) {
+      setSearchParams(currentSearchParams, { replace: true });
+    }
+  }, [validQueries]);
 
-   const page = useMemo(() => (query ? searchParams.get(query) : params[param]), [query, params, param]);
+  const page = useMemo(
+    () => (query ? searchParams.get(query) : params[param]),
+    [query, params, param]
+  );
 
-   const [currentPage, setCurrentPage] = useState(page || 1);
+  const [currentPage, setCurrentPage] = useState(page || 1);
 
-   const handlePageChange = useCallback(
-      (page) => {
-         const encodedPage = encodeURIComponent(page);
-         setCurrentPage(encodedPage);
-         onPageChange && onPageChange(encodedPage);
-      },
-      [onPageChange],
-   );
+  const handlePageChange = useCallback(
+    (page: string | number): void => {
+      const encodedPage = encodeURIComponent(page);
+      setCurrentPage(encodedPage);
+      void (onPageChange && onPageChange(encodedPage));
+    },
+    [onPageChange]
+  );
 
-   return { currentPage: +currentPage, handlePageChange, query, currentSearchParams, setCurrentPage };
+  return {
+    currentPage: +currentPage,
+    handlePageChange,
+    query,
+    currentSearchParams,
+    setCurrentPage,
+  };
 };
 
 export default usePaginationHandle;
