@@ -6,94 +6,92 @@ import { useTranslation } from "react-i18next";
 
 import { productsService, cartsService } from "@/services";
 import { cartActions, cartSelectors, authSelectors } from "@/store/slices";
-import { InnerLoader } from "@/components";
+import { InlineLoader } from "@/components";
 import { notifyService, pendingManager } from "@/utils";
-import { ProductCard, SearchBar, type Product } from "./components";
+import {
+  ProductCard,
+  ProductCardSkeleton,
+  SearchBar,
+  type Product,
+} from "./components";
 
 import styles from "./ProductListPage.module.scss";
 
 const cx = classNames.bind(styles);
 
-const LIMIT = 20; // Số sản phẩm mỗi lần load
+// Số sản phẩm mỗi lần load
+const LIMIT = 20;
 
 const ProductListPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  // Redux selectors (chỉ cho global state)
   const user = useSelector(authSelectors.user);
   const cart = useSelector(cartSelectors.cart);
 
-  // Local state
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [skip, setSkip] = useState(0);
   const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Computed state
-  const hasMore = products.length < total;
-
-  // Refs
+  const skipRef = useRef(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastProductRef = useRef<HTMLDivElement | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  const hasMore = products.length < total;
+
   // Fetch products từ API
-  const fetchProducts = useCallback(
-    async (currentSkip: number, isAppend = false) => {
-      if (pendingManager.isGetProductsPending) return;
+  const fetchProducts = async (currentSkip: number, isAppend = false) => {
+    if (pendingManager.isGetProductsPending) return;
 
-      // Create new AbortController for this request
-      const abortController = new AbortController();
-      abortControllerRef.current = abortController;
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
-      try {
-        setIsLoading(true);
-        setError(null);
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        let response;
-        if (searchQuery.trim()) {
-          // Search mode
-          response = await productsService.searchProducts({
-            q: searchQuery,
-            limit: LIMIT,
-            skip: currentSkip,
-          });
-        } else {
-          // Normal mode
-          response = await productsService.getProducts({
-            limit: LIMIT,
-            skip: currentSkip,
-          });
-        }
-
-        // Check if aborted
-        if (abortController.signal.aborted) return;
-
-        if (isAppend) {
-          setProducts((prev) => [...prev, ...response.products]);
-        } else {
-          setProducts(response.products);
-        }
-
-        setTotal(response.total);
-      } catch (err) {
-        // Ignore aborted requests
-        if (err instanceof Error && err.name === "AbortError") return;
-
-        // Chỉ log error, không show notification (service đã show rồi)
-        const errorMessage =
-          err instanceof Error ? err.message : t("serverErrors.unknownError");
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
+      let response;
+      if (searchQuery.trim()) {
+        // Search mode
+        response = await productsService.searchProducts({
+          q: searchQuery,
+          limit: LIMIT,
+          skip: currentSkip,
+        });
+      } else {
+        // Normal mode
+        response = await productsService.getProducts({
+          limit: LIMIT,
+          skip: currentSkip,
+        });
       }
-    },
-    [searchQuery, t]
-  );
+
+      // Check if aborted
+      if (abortController.signal.aborted) return;
+
+      if (isAppend) {
+        setProducts((prev) => [...prev, ...response.products]);
+      } else {
+        setProducts(response.products);
+      }
+
+      setTotal(response.total);
+    } catch (err) {
+      // Ignore aborted requests
+      if (err instanceof Error && err.name === "AbortError") return;
+
+      const errorMessage =
+        err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Fetch products khi component mount
   useEffect(() => {
@@ -130,9 +128,9 @@ const ProductListPage = () => {
     // Set new timer
     debounceTimerRef.current = setTimeout(() => {
       // Reset và fetch lại khi search query thay đổi
-      setSkip(0);
+      skipRef.current = 0;
       fetchProducts(0, false);
-    }, 500); // 500ms debounce
+    }, 500);
 
     // Cleanup
     return () => {
@@ -140,7 +138,7 @@ const ProductListPage = () => {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [searchQuery, fetchProducts]);
+  }, [searchQuery]);
 
   // Infinite scroll với IntersectionObserver
   useEffect(() => {
@@ -154,8 +152,8 @@ const ProductListPage = () => {
       const [entry] = entries;
       if (entry.isIntersecting && hasMore && !isLoading) {
         // Load more products
-        const newSkip = skip + LIMIT;
-        setSkip(newSkip);
+        const newSkip = skipRef.current + LIMIT;
+        skipRef.current = newSkip;
         fetchProducts(newSkip, true);
       }
     };
@@ -163,7 +161,8 @@ const ProductListPage = () => {
     // Create new observer
     observerRef.current = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "100px", // Trigger 100px trước khi đến bottom
+      // Trigger 100px trước khi đến bottom
+      rootMargin: "100px",
       threshold: 0.1,
     });
 
@@ -178,7 +177,7 @@ const ProductListPage = () => {
         observerRef.current.disconnect();
       }
     };
-  }, [products, hasMore, isLoading, skip, fetchProducts]);
+  }, [products, hasMore, isLoading]);
 
   // Handle search query change
   const handleSearchChange = useCallback((value: string) => {
@@ -209,7 +208,7 @@ const ProductListPage = () => {
         return;
       }
 
-      // Check if already pending (prevent spam clicks for same product)
+      // Kiểm tra xem đã pending chưa (để tránh spam clicks cho cùng sản phẩm)
       if (pendingManager.hasAddToCartPendingProductId(product.id)) {
         return;
       }
@@ -234,6 +233,11 @@ const ProductListPage = () => {
         }
       );
 
+      // Lưu trạng thái trước khi optimistic update (để rollback nếu cần)
+      const existingProduct = cart?.products.find((p) => p.id === product.id);
+      const wasProductInCart = !!existingProduct;
+      const previousQuantity = existingProduct?.quantity ?? 0;
+
       try {
         // Tạo CartProduct từ Product
         const cartProduct = {
@@ -248,7 +252,7 @@ const ProductListPage = () => {
           thumbnail: product.thumbnail,
         };
 
-        // Optimistic update
+        // Cập nhật optimistic
         dispatch(cartActions.addProduct(cartProduct));
 
         // Nếu chưa có cart, tạo mới; nếu có rồi thì update (services tự handle pending)
@@ -269,7 +273,7 @@ const ProductListPage = () => {
             ? existingProduct.quantity + 1
             : 1;
 
-          // Build products list for update
+          // Xây dựng danh sách products cho update
           const updatedProducts = [
             ...cart.products
               .filter((p) => p.id !== product.id)
@@ -287,7 +291,7 @@ const ProductListPage = () => {
           );
         }
 
-        // Update notification to success
+        // Cập nhật notification thành công
         notifyService.updatePromiseState({
           id: notificationId,
           placement,
@@ -302,14 +306,28 @@ const ProductListPage = () => {
           type: "success",
         });
       } catch (err) {
-        // Update notification to error
+        // Rollback optimistic update
+        if (wasProductInCart) {
+          // Product đã có trước đó → Restore về quantity cũ
+          dispatch(
+            cartActions.updateProductQuantity({
+              productId: product.id,
+              quantity: previousQuantity,
+            })
+          );
+        } else {
+          // Product mới thêm → Remove hoàn toàn
+          dispatch(cartActions.removeProduct(product.id));
+        }
+
+        // Cập nhật notification thành lỗi
         notifyService.updatePromiseState({
           id: notificationId,
           placement,
           state: "rejected",
         });
 
-        // Chỉ update notification nếu không phải duplicate request error
+        // Chỉ cập nhật notification nếu không phải lỗi duplicate request
         if (
           err instanceof Error &&
           !err.message.includes("already in progress")
@@ -325,7 +343,7 @@ const ProductListPage = () => {
             type: "error",
           });
         } else {
-          // Nếu là duplicate request, xóa pending notification đi
+          // Nếu là duplicate request, xóa notification đang pending đi
           notifyService.removeNotification(notificationId);
         }
       }
@@ -364,6 +382,15 @@ const ProductListPage = () => {
           </p>
         )}
 
+        {/* Skeleton Loading - Initial Load */}
+        {isLoading && products.length === 0 && !error && (
+          <div className={cx("productGrid")}>
+            {Array.from({ length: LIMIT }).map((_, index) => (
+              <ProductCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
+        )}
+
         {/* Product Grid */}
         {!error && products.length > 0 && (
           <div className={cx("productGrid")}>
@@ -378,13 +405,13 @@ const ProductListPage = () => {
           </div>
         )}
 
-        {/* Loading Spinner */}
-        {isLoading && (
-          <div
-            className={cx("loading", "flex justify-center items-center py-8")}
-          >
-            <InnerLoader size="40px" />
-          </div>
+        {/* Inline Loader - Load More */}
+        {isLoading && products.length > 0 && (
+          <InlineLoader
+            className="mt-[24px]"
+            boxSize="30px"
+            containerSize="calc(30*6px)"
+          />
         )}
 
         {/* No Results */}

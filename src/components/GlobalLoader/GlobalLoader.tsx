@@ -26,7 +26,7 @@ const GlobalLoader = ({ isSuspenseFallBack = false }: GlobalLoaderProps) => {
         ref={wrapperRef}
         className={cx(
           "wrapper",
-          "fixed inset-0 z-[1] flex flex-col items-center justify-center backdrop-blur-[2px] bg-eleventh-color",
+          "fixed inset-0 z-1 flex flex-col items-center justify-center backdrop-blur-[2px] bg-eleventh-color",
           {
             hide: !isLoading,
           }

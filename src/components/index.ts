@@ -4,6 +4,7 @@ export { default as GlobalLoader } from "./GlobalLoader";
 export { default as VirtualTable } from "./VirtualTable";
 export { default as GlobalModal } from "./GlobalModal";
 export { default as InnerLoader } from "./InnerLoader";
+export { default as InlineLoader } from "./InlineLoader";
 export { default as NotifyContainer } from "./NotifyContainer";
 export { default as Tooltip } from "./Tooltip";
 export { default as ProtectedRoute } from "./ProtectedRoute";

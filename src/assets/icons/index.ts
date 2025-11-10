@@ -15,3 +15,5 @@ export { default as RejectIcon } from "./RejectIcon";
 export { default as WarningIcon } from "./WarningIcon";
 export { default as StarIcon } from "./StarIcon";
 export { default as CartIcon } from "./CartIcon";
+export { default as PackageIcon } from "./PackageIcon";
+export { default as InfoIcon } from "./InfoIcon";

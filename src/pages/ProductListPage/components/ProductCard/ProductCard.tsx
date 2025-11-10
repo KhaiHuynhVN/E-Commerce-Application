@@ -16,7 +16,7 @@ const cx = classNames.bind(styles);
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const { t } = useTranslation();
-  
+
   // Check if this specific product is pending
   const isPending = useSelector((state: RootState) =>
     pendingManagerSelectors.hasAddToCartPendingProductId(state, product.id)
@@ -66,6 +66,41 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             <Icons.StarIcon width="16" height="16" className={cx("starIcon")} />
             <span className={cx("ratingValue")}>{rating.toFixed(1)}</span>
           </div>
+
+          {/* Stock Indicator */}
+          {stock > 0 && (
+            <div
+              className={cx("stockBadge", {
+                "stockBadge--low": stock <= 5,
+                "stockBadge--medium": stock > 5 && stock <= 20,
+                "stockBadge--high": stock > 20,
+              })}
+            >
+              {stock <= 5 ? (
+                <Icons.WarningIcon
+                  width="14"
+                  height="14"
+                  className={cx("stockIcon")}
+                />
+              ) : stock <= 20 ? (
+                <Icons.PackageIcon
+                  width="14"
+                  height="14"
+                  className={cx("stockIcon")}
+                />
+              ) : (
+                <Icons.CheckedIcon
+                  width="14"
+                  height="14"
+                  className={cx("stockIcon")}
+                />
+              )}
+              <span className={cx("stockText")}>
+                {stock <= 5 ? `Only ${stock} left!` : `${stock} in stock`}
+              </span>
+            </div>
+          )}
+
           {/* Price */}
           <div className={cx("priceContainer")}>
             {discountPercentage > 0 ? (
