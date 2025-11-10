@@ -137,16 +137,6 @@ const NotifyContainer = ({ className }: NotifyContainerProps): ReactElement => {
                     newItemOnTop
                   );
 
-                  console.log(
-                    `🔥🔥🔥🔥🔥 [NotifyContainer] BEFORE passing to Notify id=${id}:`,
-                    {
-                      handleFreeze: typeof handleFreeze,
-                      handleUnfreeze: typeof handleUnfreeze,
-                      handleFreezeName: handleFreeze?.name,
-                      handleUnfreezeName: handleUnfreeze?.name,
-                    }
-                  );
-
                   return (
                     <Notify
                       className={cx("notify-item")}
