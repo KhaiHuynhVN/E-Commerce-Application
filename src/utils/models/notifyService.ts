@@ -490,6 +490,14 @@ class NotifyService {
     isFrozen: boolean,
     notificationId: number
   ): void {
+    // Force clear: notificationId < 0 cho phép clear mà không check notification existence
+    // Dùng để cleanup khi notification unmount
+    if (notificationId < 0) {
+      this.frozenPlacements[placement] = isFrozen;
+      this.emit();
+      return;
+    }
+
     // Chỉ đóng băng nếu notification có freezeOnHover = true
     if (
       this.notifications[placement].some(

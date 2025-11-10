@@ -59,6 +59,17 @@ const useNotify = ({
     }
   }, [duration, resetProgress, promise]);
 
+  // Cleanup: Unfreeze on unmount để tránh stale frozen state
+  useEffect(() => {
+    return () => {
+      if (freezeOnHover && onUnfreeze) {
+        // Dùng -1 để force clear frozen state mà không check notification existence
+        // Vì lúc unmount, notification có thể đã bị remove khỏi service array
+        onUnfreeze(placement, -1);
+      }
+    };
+  }, [freezeOnHover, onUnfreeze, placement]);
+
   const handleAnimationStart = (
     e: React.AnimationEvent<HTMLDivElement>
   ): void => {

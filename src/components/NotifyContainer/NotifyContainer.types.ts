@@ -113,10 +113,6 @@ interface NotifyProps {
   resetProgress: boolean;
   /** Custom icons */
   customIcons: CustomIcons | null;
-  /** Màu icon */
-  iconColor?: string;
-  /** Màu progress bar */
-  progressBarColor?: string;
   /** Callback khi freeze */
   onFreeze?: (placement: NotifyPlacement, id: number) => void;
   /** Callback khi unfreeze */
