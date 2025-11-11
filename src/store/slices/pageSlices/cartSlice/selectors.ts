@@ -12,7 +12,16 @@ const cartTotal = (state: RootState) => state.cart.cart?.total || 0;
 const cartDiscountedTotal = (state: RootState) =>
   state.cart.cart?.discountedTotal || 0;
 
+const cartId = (state: RootState) => state.cart.cart?.id;
+
 // Memoized selector để tránh unnecessary rerenders
 const cartProducts = createSelector([cart], (cart) => cart?.products || []);
 
-export { cart, cartItemsCount, cartTotal, cartDiscountedTotal, cartProducts };
+export {
+  cart,
+  cartId,
+  cartItemsCount,
+  cartTotal,
+  cartDiscountedTotal,
+  cartProducts,
+};

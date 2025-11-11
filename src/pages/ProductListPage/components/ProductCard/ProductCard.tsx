@@ -18,9 +18,15 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const { t } = useTranslation();
 
   // Check if this specific product is pending
-  const isPending = useSelector((state: RootState) =>
+  // Check cả addToCart (khi chưa có cart) và updateCart (khi đã có cart)
+  const isAddToCartPendingProductId = useSelector((state: RootState) =>
     pendingManagerSelectors.hasAddToCartPendingProductId(state, product.id)
   );
+  const isUpdateCartPendingProductId = useSelector((state: RootState) =>
+    pendingManagerSelectors.hasUpdateCartPendingProductId(state, product.id)
+  );
+  const isPending = isAddToCartPendingProductId || isUpdateCartPendingProductId;
+
   const { title, thumbnail, price, rating, discountPercentage, stock } =
     product;
 

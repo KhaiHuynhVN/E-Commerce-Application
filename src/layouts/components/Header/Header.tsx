@@ -73,7 +73,8 @@ const Header = () => {
         {/* Navigation */}
         <nav className={cx("nav", "flex items-center gap-6")}>
           {/* Cart Button */}
-          <button
+          <Button
+            styleType="tertiary"
             onClick={handleGoToCart}
             className={cx("cartButton", "relative")}
             aria-label={t("header.cart")}
@@ -84,7 +85,7 @@ const Header = () => {
                 {cartItemsCount > 99 ? "99+" : cartItemsCount}
               </span>
             )}
-          </button>
+          </Button>
 
           {/* Language Selector */}
           <div className={cx("languageSelector", "flex items-center gap-2")}>

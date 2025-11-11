@@ -42,24 +42,9 @@
 
     .nav {
       .cartButton {
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        transition: all var(--primary-duration);
-        color: var(--fifteenth-color);
+        // Đã dùng Button component styleType="tertiary"
+        // Chỉ giữ lại style cho badge
         position: relative;
-
-        svg {
-          fill: currentColor;
-          stroke: currentColor;
-        }
-
-        &:hover {
-          background-color: var(--septenary-color);
-          color: var(--forty-sixth-color);
-        }
 
         .badge {
           position: absolute;

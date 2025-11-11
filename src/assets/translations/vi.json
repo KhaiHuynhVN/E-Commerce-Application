@@ -66,11 +66,14 @@
     "emptyCart": "Giỏ hàng của bạn đang trống",
     "emptyCartHint": "Bắt đầu mua sắm để thêm sản phẩm vào giỏ",
     "remove": "Xóa",
+    "confirmRemoveTitle": "Xóa Sản Phẩm",
+    "confirmRemoveMessage": "Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?",
     "summary": "Tóm Tắt Đơn Hàng",
     "subtotal": "Tạm tính",
     "discount": "Giảm giá",
     "total": "Tổng cộng",
-    "proceedToCheckout": "Tiến Hành Thanh Toán"
+    "proceedToCheckout": "Tiến Hành Thanh Toán",
+    "pleaseSlowDown": "Vui lòng thao tác chậm lại! Thay đổi trước đó vẫn đang được xử lý."
   },
   "languages": {
     "english": "Tiếng Anh",

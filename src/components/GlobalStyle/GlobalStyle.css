@@ -52,6 +52,13 @@
   --color-forty-sixth: var(--forty-sixth-color);
   --color-forty-seventh: var(--forty-seventh-color);
 
+  /* Notification colors */
+  --notify-info-color: var(--primary-color);
+  --notify-success-color: var(--fortieth-color);
+  --notify-error-color: var(--thirty-ninth-color);
+  --notify-warning-color: var(--thirty-fifth-color);
+  --notify-reject-color: var(--thirty-ninth-color);
+
   /* Font Sizes */
   --font-size-primary: var(--fs-primary);
   --font-size-secondary: var(--fs-secondary);

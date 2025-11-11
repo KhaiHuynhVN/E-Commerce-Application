@@ -1,0 +1,9 @@
+.confirm-modal {
+  :global {
+    .ant-modal-content {
+      padding: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  }
+}

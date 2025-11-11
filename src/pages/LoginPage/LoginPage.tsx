@@ -7,11 +7,12 @@ import { useTranslation } from "react-i18next";
 import classNames from "classnames/bind";
 
 import { createLoginSchema } from "@/utils";
-import { authService, authTokenService } from "@/services";
+import { authService, authTokenService, cartsService } from "@/services";
 import {
   authActions,
   authSelectors,
   pendingManagerSelectors,
+  cartActions,
 } from "@/store/slices";
 import { Input, Button } from "@/commonComponents";
 import { InnerLoader } from "@/components";
@@ -76,6 +77,18 @@ const LoginPage = () => {
 
       // Lưu thông tin user vào Redux
       dispatch(authActions.setAuth(response));
+
+      // Fetch cart của user và lưu vào Redux
+      try {
+        const cartResponse = await cartsService.getUserCarts(response.id);
+        // Lấy cart đầu tiên của user (active cart)
+        if (cartResponse.carts.length > 0) {
+          dispatch(cartActions.setCart(cartResponse.carts[0]));
+        }
+      } catch (cartError) {
+        // Không fail login nếu fetch cart lỗi, chỉ log
+        console.error("Failed to fetch cart:", cartError);
+      }
 
       // Chuyển hướng về trang products
       navigate(routeConfigs.products.path);
@@ -209,10 +222,10 @@ const LoginPage = () => {
           <p className={cx("hintTitle", "mb-2")}>{t("login.testAccount")}:</p>
           <div className={cx("hintContent", "space-y-1")}>
             <p>
-              {t("login.usernameLabel")}: <strong>emilys</strong>
+              {t("login.usernameLabel")}: <strong>noramx</strong>
             </p>
             <p>
-              {t("login.passwordLabel")}: <strong>emilyspass</strong>
+              {t("login.passwordLabel")}: <strong>noramxpass</strong>
             </p>
           </div>
         </div>

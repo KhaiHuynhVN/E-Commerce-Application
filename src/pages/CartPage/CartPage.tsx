@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import classNames from "classnames/bind";
@@ -10,8 +10,12 @@ import {
   cartSelectors,
   pendingManagerSelectors,
 } from "@/store/slices";
+import type { RootState } from "@/store";
 import { cartsService } from "@/services";
-import { InnerLoader } from "@/components";
+import { Button } from "@/commonComponents";
+import { ConfirmModal } from "@/components";
+import { pendingManager, notifyService } from "@/utils";
+import { CartItemSkeleton } from "./components";
 
 import styles from "./CartPage.module.scss";
 
@@ -23,6 +27,7 @@ const CartPage = () => {
 
   const user = useSelector(authSelectors.user);
   const cart = useSelector(cartSelectors.cart);
+  const cartId = useSelector(cartSelectors.cartId);
   const cartProducts = useSelector(cartSelectors.cartProducts);
   const cartTotal = useSelector(cartSelectors.cartTotal);
   const cartDiscountedTotal = useSelector(cartSelectors.cartDiscountedTotal);
@@ -31,10 +36,32 @@ const CartPage = () => {
   );
 
   const [error, setError] = useState<string | null>(null);
+  const [editingQuantities, setEditingQuantities] = useState<
+    Record<number, number>
+  >({});
+  const [productToRemove, setProductToRemove] = useState<number | null>(null);
 
-  // Fetch user's cart
+  // Check pending state cho product đang remove
+  const isRemovingProduct = useSelector((state: RootState) =>
+    productToRemove !== null
+      ? pendingManagerSelectors.hasUpdateCartPendingProductId(
+          state,
+          productToRemove
+        )
+      : false
+  );
+
+  // Debounce timers cho mỗi product quantity change
+  const debounceTimersRef = useRef<
+    Record<number, ReturnType<typeof setTimeout>>
+  >({});
+
+  // Lấy giỏ hàng của user
   const fetchCart = async () => {
     if (!user) return;
+
+    // Nếu đang pending, skip để tránh duplicate call
+    if (isGetCartPending) return;
 
     try {
       const response = await cartsService.getUserCarts(user.id);
@@ -50,72 +77,161 @@ const CartPage = () => {
     }
   };
 
-  // Fetch cart khi component mount hoặc user thay đổi
+  // Gọi fetchCart khi component mount
   useEffect(() => {
     fetchCart();
+
+    // Cleanup: Clear all debounce timers
+    return () => {
+      Object.values(debounceTimersRef.current).forEach((timer) => {
+        clearTimeout(timer);
+      });
+    };
   }, [user]);
 
-  // Handle quantity change
+  // Xử lý thay đổi số lượng sản phẩm với debounce
   const handleQuantityChange = async (
     productId: number,
     newQuantity: number
   ) => {
-    if (newQuantity < 1 || !cart) return;
+    if (newQuantity < 1 || !cart || !cartId) return;
 
-    try {
-      // Optimistic update
-      dispatch(
-        cartActions.updateProductQuantity({
-          productId,
-          quantity: newQuantity,
-        })
-      );
+    // Check xem có request nào đang pending cho product này không
+    // Nếu đang có request chạy, chặn luôn không cho thay đổi
+    if (pendingManager.hasUpdateCartPendingProductId(productId)) {
+      notifyService.addNotification(t("cart.pleaseSlowDown"), {
+        type: "warning",
+        duration: 3000,
+        showProgressBar: true,
+        freezeOnHover: true,
+        stack: true,
+        newItemOnTop: true,
+        placement: "top-right",
+        width: 350,
+        maxWidth: 350,
+      });
+      return;
+    }
 
-      // Update trên server
-      await cartsService.updateCart(cart.id, {
-        merge: false,
-        products: cart.products.map((p) => ({
+    setEditingQuantities((prev) => ({ ...prev, [productId]: newQuantity }));
+
+    // Clear existing timer cho product này
+    if (debounceTimersRef.current[productId]) {
+      clearTimeout(debounceTimersRef.current[productId]);
+    }
+
+    // Set new debounce timer
+    debounceTimersRef.current[productId] = setTimeout(async () => {
+      try {
+        // Lấy products với quantity từ local editing state hoặc Redux
+        const currentProducts = cartProducts.map((p) => ({
           id: p.id,
           quantity: p.id === productId ? newQuantity : p.quantity,
-        })),
-      });
+        }));
+
+        // Gửi request lên server
+        const response = await cartsService.updateCart(
+          cartId,
+          {
+            merge: false,
+            products: currentProducts,
+          },
+          productId
+        );
+
+        // Update Redux state với server response
+        dispatch(cartActions.setCart(response));
+
+        // Clear local editing state sau khi sync xong
+        setEditingQuantities((prev) => {
+          const updated = { ...prev };
+          delete updated[productId];
+          return updated;
+        });
+
+        // Clear timer sau khi hoàn thành
+        delete debounceTimersRef.current[productId];
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : t("serverErrors.unknownError");
+        setError(errorMessage);
+
+        // Clear local editing state khi error
+        setEditingQuantities((prev) => {
+          const updated = { ...prev };
+          delete updated[productId];
+          return updated;
+        });
+
+        // Clear timer
+        delete debounceTimersRef.current[productId];
+      }
+    }, 500);
+  };
+
+  // Mở confirm modal
+  const handleRemoveClick = (productId: number) => {
+    setProductToRemove(productId);
+  };
+
+  // Xử lý xóa sản phẩm khỏi giỏ hàng
+  const handleConfirmRemove = async () => {
+    if (!productToRemove || !cart || !cartId) {
+      setProductToRemove(null);
+      return;
+    }
+
+    // Check xem product có tồn tại không
+    const productExists = cart.products.some((p) => p.id === productToRemove);
+    if (!productExists) {
+      setProductToRemove(null);
+      return;
+    }
+
+    try {
+      // Lấy products sau khi remove product này
+      const currentProducts = cartProducts
+        .filter((p) => p.id !== productToRemove)
+        .map((p) => ({
+          id: p.id,
+          quantity: p.quantity,
+        }));
+
+      // Gửi request lên server
+      const response = await cartsService.updateCart(
+        cartId,
+        {
+          merge: false,
+          products: currentProducts,
+        },
+        productToRemove
+      );
+
+      // Update state với server response
+      dispatch(cartActions.setCart(response));
+
+      // Đóng modal (chỉ khi API success)
+      setProductToRemove(null);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : t("serverErrors.unknownError");
       setError(errorMessage);
 
-      // Rollback nếu API fail (có thể fetch lại cart)
+      // Đóng modal khi có lỗi
+      setProductToRemove(null);
     }
   };
 
-  // Handle remove product
-  const handleRemoveProduct = async (productId: number) => {
-    if (!cart) return;
-
-    try {
-      // Optimistic update
-      dispatch(cartActions.removeProduct(productId));
-
-      // Update trên server
-      await cartsService.updateCart(cart.id, {
-        merge: false,
-        products: cart.products
-          .filter((p) => p.id !== productId)
-          .map((p) => ({
-            id: p.id,
-            quantity: p.quantity,
-          })),
-      });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("serverErrors.unknownError");
-      setError(errorMessage);
-    }
+  // Đóng confirm modal
+  const handleCancelRemove = () => {
+    setProductToRemove(null);
   };
 
   return (
-    <div className={cx("wrapper", "min-h-screen p-6")}>
-      <div className={cx("container", "max-w-7xl mx-auto")}>
+    <div
+      className={cx("wrapper", "p-6 max-h-[calc(100vh-var(--header-height))]")}
+    >
+      <div className={cx("container", "mx-auto")}>
         {/* Header */}
         <h1 className={cx("title", "text-5xl font-bold mb-8")}>
           {t("cart.title")}
@@ -124,9 +240,29 @@ const CartPage = () => {
         {/* Loading State */}
         {isGetCartPending && (
           <div
-            className={cx("loading", "flex justify-center items-center py-8")}
+            className={cx("content", "grid grid-cols-1 lg:grid-cols-3 gap-8")}
           >
-            <InnerLoader size="40px" />
+            <div className={cx("productsList", "lg:col-span-2")}>
+              {Array.from({ length: 10 }).map((_, index) => (
+                <CartItemSkeleton key={`skeleton-${index}`} />
+              ))}
+            </div>
+
+            {/* Summary Skeleton */}
+            <div className={cx("summary", "lg:col-span-1")}>
+              <div
+                className={cx(
+                  "summaryCard",
+                  "bg-white p-6 rounded-lg shadow-md sticky top-24"
+                )}
+              >
+                <div className="placeholder h-8 w-40 mb-6" />
+                <div className="placeholder h-5 w-full mb-3" />
+                <div className="placeholder h-5 w-full mb-3" />
+                <div className="placeholder h-6 w-full mb-6" />
+                <div className="placeholder h-12 w-full rounded-lg" />
+              </div>
+            </div>
           </div>
         )}
 
@@ -153,7 +289,9 @@ const CartPage = () => {
             className={cx("content", "grid grid-cols-1 lg:grid-cols-3 gap-8")}
           >
             {/* Products List */}
-            <div className={cx("productsList", "lg:col-span-2")}>
+            <div
+              className={cx("productsList", "lg:col-span-2 overflow-y-auto")}
+            >
               {cartProducts.map((product) => (
                 <div
                   key={product.id}
@@ -193,24 +331,33 @@ const CartPage = () => {
                         "flex items-center gap-2 mt-4"
                       )}
                     >
-                      <button
-                        onClick={() =>
-                          handleQuantityChange(product.id, product.quantity - 1)
+                      <Button
+                        styleType="senary"
+                        onClick={() => {
+                          const currentQuantity =
+                            editingQuantities[product.id] ?? product.quantity;
+                          handleQuantityChange(product.id, currentQuantity - 1);
+                        }}
+                        disabled={
+                          (editingQuantities[product.id] ?? product.quantity) <=
+                          1
                         }
-                        className={cx("quantityButton")}
-                        disabled={product.quantity <= 1}
                       >
                         −
-                      </button>
-                      <span className={cx("quantity")}>{product.quantity}</span>
-                      <button
-                        onClick={() =>
-                          handleQuantityChange(product.id, product.quantity + 1)
-                        }
-                        className={cx("quantityButton")}
+                      </Button>
+                      <span className={cx("quantity")}>
+                        {editingQuantities[product.id] ?? product.quantity}
+                      </span>
+                      <Button
+                        styleType="senary"
+                        onClick={() => {
+                          const currentQuantity =
+                            editingQuantities[product.id] ?? product.quantity;
+                          handleQuantityChange(product.id, currentQuantity + 1);
+                        }}
                       >
                         +
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -222,14 +369,17 @@ const CartPage = () => {
                     )}
                   >
                     <p className={cx("productTotal", "text-lg font-bold")}>
-                      ${product.discountedTotal.toFixed(2)}
+                      $
+                      {(product.discountedTotal || product.total || 0).toFixed(
+                        2
+                      )}
                     </p>
-                    <button
-                      onClick={() => handleRemoveProduct(product.id)}
-                      className={cx("removeButton")}
+                    <Button
+                      styleType="septenary"
+                      onClick={() => handleRemoveClick(product.id)}
                     >
                       {t("cart.remove")}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -240,7 +390,7 @@ const CartPage = () => {
               <div
                 className={cx(
                   "summaryCard",
-                  "bg-white rounded-lg shadow p-6 sticky top-24"
+                  "bg-white rounded-lg shadow p-6 sticky top-[65px]"
                 )}
               >
                 <h2 className={cx("summaryTitle", "text-2xl font-bold mb-4")}>
@@ -274,15 +424,25 @@ const CartPage = () => {
                   <span>${cartDiscountedTotal.toFixed(2)}</span>
                 </div>
 
-                <button
-                  className={cx("checkoutButton", "w-full py-3 rounded-lg")}
-                >
+                <Button styleType="primary" className="w-full">
                   {t("cart.proceedToCheckout")}
-                </button>
+                </Button>
               </div>
             </div>
           </div>
         )}
+
+        {/* Confirm Remove Modal */}
+        <ConfirmModal
+          isOpen={productToRemove !== null}
+          type="warning"
+          title={t("cart.confirmRemoveTitle")}
+          message={t("cart.confirmRemoveMessage")}
+          onConfirm={handleConfirmRemove}
+          onCancel={handleCancelRemove}
+          isLoading={isRemovingProduct}
+          isDangerous
+        />
       </div>
     </div>
   );

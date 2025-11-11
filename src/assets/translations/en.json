@@ -66,11 +66,14 @@
     "emptyCart": "Your cart is empty",
     "emptyCartHint": "Start shopping to add items to your cart",
     "remove": "Remove",
+    "confirmRemoveTitle": "Remove Product",
+    "confirmRemoveMessage": "Are you sure you want to remove this product from your cart?",
     "summary": "Order Summary",
     "subtotal": "Subtotal",
     "discount": "Discount",
     "total": "Total",
-    "proceedToCheckout": "Proceed to Checkout"
+    "proceedToCheckout": "Proceed to Checkout",
+    "pleaseSlowDown": "Please slow down! Your previous update is still processing."
   },
   "languages": {
     "english": "English",

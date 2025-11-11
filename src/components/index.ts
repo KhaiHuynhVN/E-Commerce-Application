@@ -3,6 +3,7 @@ export { default as Pagination } from "./Pagination";
 export { default as GlobalLoader } from "./GlobalLoader";
 export { default as VirtualTable } from "./VirtualTable";
 export { default as GlobalModal } from "./GlobalModal";
+export { default as ConfirmModal } from "./ConfirmModal";
 export { default as InnerLoader } from "./InnerLoader";
 export { default as InlineLoader } from "./InlineLoader";
 export { default as NotifyContainer } from "./NotifyContainer";
