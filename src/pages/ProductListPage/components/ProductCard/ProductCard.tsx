@@ -29,7 +29,10 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
 
   return (
     <div
-      className={cx("wrapper", "bg-white rounded-xl shadow-lg flex flex-col")}
+      className={cx(
+        "wrapper",
+        "bg-white rounded-xl shadow-lg flex flex-col h-full"
+      )}
     >
       {/* Product Image */}
       <div className={cx("imageContainer", "relative")}>

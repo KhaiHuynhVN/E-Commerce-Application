@@ -4,14 +4,10 @@ import type { Cart, CartProduct } from "../../../../services";
 
 interface CartState {
   cart: Cart | null;
-  isLoading: boolean;
-  error: string | null;
 }
 
 const initialState: CartState = {
   cart: null,
-  isLoading: false,
-  error: null,
 };
 
 const cartSlice = createSlice({
@@ -21,24 +17,11 @@ const cartSlice = createSlice({
     // Set toàn bộ cart
     setCart: (state, action: PayloadAction<Cart>) => {
       state.cart = action.payload;
-      state.error = null;
-    },
-
-    // Set loading state
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-
-    // Set error
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-      state.isLoading = false;
     },
 
     // Clear cart (sau khi checkout hoặc logout)
     clearCart: (state) => {
       state.cart = null;
-      state.error = null;
     },
 
     // Update quantity của 1 product trong cart (optimistic update)
@@ -134,8 +117,6 @@ const cartSlice = createSlice({
 
 const {
   setCart,
-  setLoading,
-  setError,
   clearCart,
   updateProductQuantity,
   removeProduct,
@@ -144,8 +125,6 @@ const {
 
 export {
   setCart,
-  setLoading,
-  setError,
   clearCart,
   updateProductQuantity,
   removeProduct,

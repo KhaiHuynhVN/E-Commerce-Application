@@ -1,9 +1,15 @@
-import { useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import classNames from "classnames/bind";
 
-import { authSelectors, cartActions, cartSelectors } from "@/store/slices";
+import {
+  authSelectors,
+  cartActions,
+  cartSelectors,
+  pendingManagerSelectors,
+} from "@/store/slices";
 import { cartsService } from "@/services";
 import { InnerLoader } from "@/components";
 
@@ -20,36 +26,40 @@ const CartPage = () => {
   const cartProducts = useSelector(cartSelectors.cartProducts);
   const cartTotal = useSelector(cartSelectors.cartTotal);
   const cartDiscountedTotal = useSelector(cartSelectors.cartDiscountedTotal);
-  const isLoading = useSelector(cartSelectors.isLoading);
-  const error = useSelector(cartSelectors.error);
+  const isGetCartPending = useSelector(
+    pendingManagerSelectors.isGetCartPending
+  );
 
-  // Fetch user's cart khi component mount
-  useEffect(() => {
-    const fetchCart = async () => {
-      if (!user) return;
+  const [error, setError] = useState<string | null>(null);
 
-      try {
-        dispatch(cartActions.setLoading(true));
-        const response = await cartsService.getUserCarts(user.id);
+  // Fetch user's cart
+  const fetchCart = async () => {
+    if (!user) return;
 
-        // Lấy cart đầu tiên của user (active cart)
-        if (response.carts.length > 0) {
-          dispatch(cartActions.setCart(response.carts[0]));
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : t("serverErrors.unknownError");
-        dispatch(cartActions.setError(errorMessage));
-      } finally {
-        dispatch(cartActions.setLoading(false));
+    try {
+      const response = await cartsService.getUserCarts(user.id);
+
+      // Lấy cart đầu tiên của user (active cart)
+      if (response.carts.length > 0) {
+        dispatch(cartActions.setCart(response.carts[0]));
       }
-    };
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : t("serverErrors.unknownError");
+      setError(errorMessage);
+    }
+  };
 
+  // Fetch cart khi component mount hoặc user thay đổi
+  useEffect(() => {
     fetchCart();
-  }, [user, dispatch, t]);
+  }, [user]);
 
   // Handle quantity change
-  const handleQuantityChange = async (productId: number, newQuantity: number) => {
+  const handleQuantityChange = async (
+    productId: number,
+    newQuantity: number
+  ) => {
     if (newQuantity < 1 || !cart) return;
 
     try {
@@ -72,7 +82,7 @@ const CartPage = () => {
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : t("serverErrors.unknownError");
-      dispatch(cartActions.setError(errorMessage));
+      setError(errorMessage);
 
       // Rollback nếu API fail (có thể fetch lại cart)
     }
@@ -99,7 +109,7 @@ const CartPage = () => {
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : t("serverErrors.unknownError");
-      dispatch(cartActions.setError(errorMessage));
+      setError(errorMessage);
     }
   };
 
@@ -112,8 +122,10 @@ const CartPage = () => {
         </h1>
 
         {/* Loading State */}
-        {isLoading && (
-          <div className={cx("loading", "flex justify-center items-center py-8")}>
+        {isGetCartPending && (
+          <div
+            className={cx("loading", "flex justify-center items-center py-8")}
+          >
             <InnerLoader size="40px" />
           </div>
         )}
@@ -126,7 +138,7 @@ const CartPage = () => {
         )}
 
         {/* Empty Cart */}
-        {!isLoading && !error && cartProducts.length === 0 && (
+        {!isGetCartPending && !error && cartProducts.length === 0 && (
           <div className={cx("empty", "text-center py-16")}>
             <p className={cx("emptyText", "text-2xl mb-4")}>
               {t("cart.emptyCart")}
@@ -136,25 +148,38 @@ const CartPage = () => {
         )}
 
         {/* Cart Content */}
-        {!isLoading && !error && cartProducts.length > 0 && (
-          <div className={cx("content", "grid grid-cols-1 lg:grid-cols-3 gap-8")}>
+        {!isGetCartPending && !error && cartProducts.length > 0 && (
+          <div
+            className={cx("content", "grid grid-cols-1 lg:grid-cols-3 gap-8")}
+          >
             {/* Products List */}
             <div className={cx("productsList", "lg:col-span-2")}>
               {cartProducts.map((product) => (
                 <div
                   key={product.id}
-                  className={cx("productItem", "flex gap-4 p-4 mb-4 bg-white rounded-lg shadow")}
+                  className={cx(
+                    "productItem",
+                    "flex gap-4 p-4 mb-4 bg-white rounded-lg shadow"
+                  )}
                 >
                   {/* Product Image */}
                   <img
                     src={product.thumbnail}
                     alt={product.title}
-                    className={cx("productImage", "w-24 h-24 object-cover rounded")}
+                    className={cx(
+                      "productImage",
+                      "w-24 h-24 object-cover rounded"
+                    )}
                   />
 
                   {/* Product Info */}
                   <div className={cx("productInfo", "flex-1")}>
-                    <h3 className={cx("productTitle", "text-lg font-semibold mb-2")}>
+                    <h3
+                      className={cx(
+                        "productTitle",
+                        "text-lg font-semibold mb-2"
+                      )}
+                    >
                       {product.title}
                     </h3>
                     <p className={cx("productPrice", "text-gray-600")}>
@@ -162,9 +187,16 @@ const CartPage = () => {
                     </p>
 
                     {/* Quantity Controls */}
-                    <div className={cx("quantityControls", "flex items-center gap-2 mt-4")}>
+                    <div
+                      className={cx(
+                        "quantityControls",
+                        "flex items-center gap-2 mt-4"
+                      )}
+                    >
                       <button
-                        onClick={() => handleQuantityChange(product.id, product.quantity - 1)}
+                        onClick={() =>
+                          handleQuantityChange(product.id, product.quantity - 1)
+                        }
                         className={cx("quantityButton")}
                         disabled={product.quantity <= 1}
                       >
@@ -172,7 +204,9 @@ const CartPage = () => {
                       </button>
                       <span className={cx("quantity")}>{product.quantity}</span>
                       <button
-                        onClick={() => handleQuantityChange(product.id, product.quantity + 1)}
+                        onClick={() =>
+                          handleQuantityChange(product.id, product.quantity + 1)
+                        }
                         className={cx("quantityButton")}
                       >
                         +
@@ -181,7 +215,12 @@ const CartPage = () => {
                   </div>
 
                   {/* Product Total & Remove */}
-                  <div className={cx("productActions", "flex flex-col items-end justify-between")}>
+                  <div
+                    className={cx(
+                      "productActions",
+                      "flex flex-col items-end justify-between"
+                    )}
+                  >
                     <p className={cx("productTotal", "text-lg font-bold")}>
                       ${product.discountedTotal.toFixed(2)}
                     </p>
@@ -198,7 +237,12 @@ const CartPage = () => {
 
             {/* Cart Summary */}
             <div className={cx("summary", "lg:col-span-1")}>
-              <div className={cx("summaryCard", "bg-white rounded-lg shadow p-6 sticky top-24")}>
+              <div
+                className={cx(
+                  "summaryCard",
+                  "bg-white rounded-lg shadow p-6 sticky top-24"
+                )}
+              >
                 <h2 className={cx("summaryTitle", "text-2xl font-bold mb-4")}>
                   {t("cart.summary")}
                 </h2>
@@ -208,19 +252,31 @@ const CartPage = () => {
                   <span>${cartTotal.toFixed(2)}</span>
                 </div>
 
-                <div className={cx("summaryRow", "flex justify-between mb-2 text-green-600")}>
+                <div
+                  className={cx(
+                    "summaryRow",
+                    "flex justify-between mb-2 text-green-600"
+                  )}
+                >
                   <span>{t("cart.discount")}:</span>
                   <span>-${(cartTotal - cartDiscountedTotal).toFixed(2)}</span>
                 </div>
 
                 <hr className="my-4" />
 
-                <div className={cx("summaryRow", "flex justify-between text-xl font-bold mb-6")}>
+                <div
+                  className={cx(
+                    "summaryRow",
+                    "flex justify-between text-xl font-bold mb-6"
+                  )}
+                >
                   <span>{t("cart.total")}:</span>
                   <span>${cartDiscountedTotal.toFixed(2)}</span>
                 </div>
 
-                <button className={cx("checkoutButton", "w-full py-3 rounded-lg")}>
+                <button
+                  className={cx("checkoutButton", "w-full py-3 rounded-lg")}
+                >
                   {t("cart.proceedToCheckout")}
                 </button>
               </div>
@@ -233,4 +289,3 @@ const CartPage = () => {
 };
 
 export default CartPage;
-

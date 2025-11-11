@@ -55,6 +55,12 @@
     "cart": "Shopping Cart",
     "logout": "Logout"
   },
+  "sidebar": {
+    "products": "Products",
+    "cart": "Shopping Cart",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar"
+  },
   "cart": {
     "title": "Shopping Cart",
     "emptyCart": "Your cart is empty",

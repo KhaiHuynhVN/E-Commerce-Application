@@ -55,6 +55,12 @@
     "cart": "Giỏ hàng",
     "logout": "Đăng xuất"
   },
+  "sidebar": {
+    "products": "Sản Phẩm",
+    "cart": "Giỏ Hàng",
+    "expand": "Mở rộng thanh bên",
+    "collapse": "Thu gọn thanh bên"
+  },
   "cart": {
     "title": "Giỏ Hàng",
     "emptyCart": "Giỏ hàng của bạn đang trống",

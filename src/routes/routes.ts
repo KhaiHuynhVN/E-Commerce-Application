@@ -11,7 +11,9 @@ const CartPage = lazy(() => import("../pages/CartPage"));
 const NoHeaderAndFooterLayout = lazy(
   () => import("../layouts/NoHeaderAndFooterLayout")
 );
-const HeaderOnlyLayout = lazy(() => import("../layouts/HeaderOnlyLayout"));
+const HeaderWithSidebarLayout = lazy(
+  () => import("../layouts/HeaderWithSidebarLayout")
+);
 
 const routes = [
   {
@@ -22,12 +24,12 @@ const routes = [
   {
     path: routeConfigs.products.path,
     component: ProductListPage,
-    layout: HeaderOnlyLayout,
+    layout: HeaderWithSidebarLayout,
   },
   {
     path: routeConfigs.cart.path,
     component: CartPage,
-    layout: HeaderOnlyLayout,
+    layout: HeaderWithSidebarLayout,
   },
 ];
 
