@@ -45,6 +45,8 @@ const CartPage = () => {
   const hasAnyUpdateCartPending = updateCartPendingProductIds.length > 0;
 
   const [error, setError] = useState<string | null>(null);
+  const [isDebouncingQuantityChange, setIsDebouncingQuantityChange] =
+    useState(false);
   const [editingQuantities, setEditingQuantities] = useState<
     Record<number, number>
   >({});
@@ -129,6 +131,9 @@ const CartPage = () => {
       clearTimeout(debounceTimersRef.current[productId]);
     }
 
+    // Set debouncing state
+    setIsDebouncingQuantityChange(true);
+
     // Set new debounce timer
     debounceTimersRef.current[productId] = setTimeout(async () => {
       try {
@@ -160,6 +165,11 @@ const CartPage = () => {
 
         // Clear timer sau khi hoàn thành
         delete debounceTimersRef.current[productId];
+
+        // Clear debouncing state nếu không còn timer nào
+        if (Object.keys(debounceTimersRef.current).length === 0) {
+          setIsDebouncingQuantityChange(false);
+        }
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : t("serverErrors.unknownError");
@@ -174,6 +184,11 @@ const CartPage = () => {
 
         // Clear timer
         delete debounceTimersRef.current[productId];
+
+        // Clear debouncing state nếu không còn timer nào
+        if (Object.keys(debounceTimersRef.current).length === 0) {
+          setIsDebouncingQuantityChange(false);
+        }
       }
     }, 500);
   };
@@ -238,8 +253,8 @@ const CartPage = () => {
 
   // Xử lý click checkout button
   const handleCheckoutClick = () => {
-    // Chặn navigation nếu có pending operations
-    if (hasAnyUpdateCartPending) return;
+    // Chặn navigation nếu có pending operations hoặc đang debounce
+    if (hasAnyUpdateCartPending || isDebouncingQuantityChange) return;
 
     navigate(routeConfigs.checkout.path);
   };
@@ -442,7 +457,9 @@ const CartPage = () => {
                   styleType="primary"
                   className="w-full"
                   onClick={handleCheckoutClick}
-                  disabled={hasAnyUpdateCartPending}
+                  disabled={
+                    hasAnyUpdateCartPending || isDebouncingQuantityChange
+                  }
                 >
                   {t("cart.proceedToCheckout")}
                 </Button>
