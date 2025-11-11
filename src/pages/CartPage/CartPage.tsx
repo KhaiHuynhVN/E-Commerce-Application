@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import classNames from "classnames/bind";
 
@@ -16,6 +17,7 @@ import { Button } from "@/commonComponents";
 import { ConfirmModal } from "@/components";
 import { pendingManager, notifyService } from "@/utils";
 import { CartItemSkeleton } from "./components";
+import routeConfigs from "@/routeConfigs";
 
 import styles from "./CartPage.module.scss";
 
@@ -24,6 +26,7 @@ const cx = classNames.bind(styles);
 const CartPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const user = useSelector(authSelectors.user);
   const cart = useSelector(cartSelectors.cart);
@@ -34,6 +37,12 @@ const CartPage = () => {
   const isGetCartPending = useSelector(
     pendingManagerSelectors.isGetCartPending
   );
+  const updateCartPendingProductIds = useSelector(
+    pendingManagerSelectors.updateCartPendingProductIds
+  );
+
+  // Check nếu có bất kỳ update cart operation nào đang pending
+  const hasAnyUpdateCartPending = updateCartPendingProductIds.length > 0;
 
   const [error, setError] = useState<string | null>(null);
   const [editingQuantities, setEditingQuantities] = useState<
@@ -227,6 +236,14 @@ const CartPage = () => {
     setProductToRemove(null);
   };
 
+  // Xử lý click checkout button
+  const handleCheckoutClick = () => {
+    // Chặn navigation nếu có pending operations
+    if (hasAnyUpdateCartPending) return;
+
+    navigate(routeConfigs.checkout.path);
+  };
+
   return (
     <div
       className={cx("wrapper", "p-6 max-h-[calc(100vh-var(--header-height))]")}
@@ -369,10 +386,7 @@ const CartPage = () => {
                     )}
                   >
                     <p className={cx("productTotal", "text-lg font-bold")}>
-                      $
-                      {(product.discountedTotal || product.total || 0).toFixed(
-                        2
-                      )}
+                      ${product.discountedPrice.toFixed(2)}
                     </p>
                     <Button
                       styleType="septenary"
@@ -424,7 +438,12 @@ const CartPage = () => {
                   <span>${cartDiscountedTotal.toFixed(2)}</span>
                 </div>
 
-                <Button styleType="primary" className="w-full">
+                <Button
+                  styleType="primary"
+                  className="w-full"
+                  onClick={handleCheckoutClick}
+                  disabled={hasAnyUpdateCartPending}
+                >
                   {t("cart.proceedToCheckout")}
                 </Button>
               </div>

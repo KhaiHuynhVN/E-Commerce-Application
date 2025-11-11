@@ -11,16 +11,6 @@
     width: var(--sidebar-collapsed-width);
   }
 
-  // Scrollbar styling
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-  }
-
   .toggle-button {
     position: absolute;
     top: 12px;

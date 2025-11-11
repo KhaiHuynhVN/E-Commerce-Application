@@ -233,31 +233,12 @@ const ProductListPage = () => {
         }
       );
 
-      // Lưu trạng thái trước khi optimistic update (để rollback nếu cần)
-      const existingProduct = cart?.products.find((p) => p.id === product.id);
-      const wasProductInCart = !!existingProduct;
-      const previousQuantity = existingProduct?.quantity ?? 0;
-
       try {
-        // Tạo CartProduct từ Product
-        const cartProduct = {
-          id: product.id,
-          title: product.title,
-          price: product.price,
-          quantity: 1,
-          total: product.price,
-          discountPercentage: product.discountPercentage,
-          discountedTotal:
-            product.price * (1 - product.discountPercentage / 100),
-          thumbnail: product.thumbnail,
-        };
-
-        // Cập nhật optimistic
-        dispatch(cartActions.addProduct(cartProduct));
-
-        // Nếu chưa có cart, tạo mới; nếu có rồi thì update (services tự handle pending)
+        // Gọi API trực tiếp (không optimistic update)
+        let response;
         if (!cart) {
-          await cartsService.addToCart(
+          // Nếu chưa có cart, tạo mới
+          response = await cartsService.addToCart(
             {
               userId: user.id,
               products: [{ id: product.id, quantity: 1 }],
@@ -281,7 +262,7 @@ const ProductListPage = () => {
             { id: product.id, quantity: newQuantity },
           ];
 
-          await cartsService.updateCart(
+          response = await cartsService.updateCart(
             cart.id,
             {
               merge: false,
@@ -290,6 +271,9 @@ const ProductListPage = () => {
             product.id
           );
         }
+
+        // Update Redux state với API response
+        dispatch(cartActions.setCart(response));
 
         // Cập nhật notification thành công
         notifyService.updatePromiseState({
@@ -306,20 +290,6 @@ const ProductListPage = () => {
           type: "success",
         });
       } catch (err) {
-        // Rollback optimistic update
-        if (wasProductInCart) {
-          // Product đã có trước đó → Restore về quantity cũ
-          dispatch(
-            cartActions.updateProductQuantity({
-              productId: product.id,
-              quantity: previousQuantity,
-            })
-          );
-        } else {
-          // Product mới thêm → Remove hoàn toàn
-          dispatch(cartActions.removeProduct(product.id));
-        }
-
         // Cập nhật notification thành lỗi
         notifyService.updatePromiseState({
           id: notificationId,

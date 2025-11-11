@@ -49,6 +49,14 @@ const useInput = ({
   const previousValueRef = useRef("");
   const selectedLengthRef = useRef(0);
   const isExternalValueInitialized = useRef(false);
+
+  // Helper: Check if input type supports text selection
+  // setSelectionRange() không hỗ trợ input type: email, number, date, time, etc.
+  const supportsTextSelection = (inputElement: HTMLInputElement): boolean => {
+    return ["text", "search", "url", "tel", "password"].includes(
+      inputElement.type
+    );
+  };
   const prevErrorRef = useRef<FieldError | null | undefined>(null);
 
   let field: UseInputReturn["field"] = {
@@ -106,7 +114,9 @@ const useInput = ({
 
   useEffect(() => {
     if (isCustomPassword && inputRef.current && shouldUpdateSelection) {
-      inputRef.current.setSelectionRange(selection.start, selection.end);
+      if (supportsTextSelection(inputRef.current)) {
+        inputRef.current.setSelectionRange(selection.start, selection.end);
+      }
     }
   }, [isCustomPassword, selection, shouldUpdateSelection]);
 
@@ -264,7 +274,7 @@ const useInput = ({
 
     requestAnimationFrame(() => {
       setSelection({ start: newCursorPosition, end: newCursorPosition });
-      if (inputRef.current) {
+      if (inputRef.current && supportsTextSelection(inputRef.current)) {
         inputRef.current.setSelectionRange(
           newCursorPosition,
           newCursorPosition
@@ -332,7 +342,7 @@ const useInput = ({
       }
 
       requestAnimationFrame(() => {
-        if (inputRef.current) {
+        if (inputRef.current && supportsTextSelection(inputRef.current)) {
           inputRef.current.setSelectionRange(
             newCursorPosition,
             newCursorPosition
@@ -343,9 +353,29 @@ const useInput = ({
       const target = e.target as HTMLInputElement;
       const { selectionStart } = target;
       const processed = processValue(target.value, selectionStart ?? 0);
+      const beforeDataProcessor = processed.value;
       const processedValue = isTrimStart
         ? dataProcessor(processed.value).trimStart()
         : dataProcessor(processed.value);
+
+      // Tính toán lại vị trí con trỏ nếu dataProcessor thay đổi độ dài chuỗi
+      let newCursorPosition = processed.cursorPosition;
+      if (beforeDataProcessor !== processedValue) {
+        // dataProcessor đã thay đổi giá trị, cần điều chỉnh vị trí con trỏ
+        // Đếm số ký tự không phải chữ/số trước con trỏ trong cả 2 giá trị
+        const beforeCount = beforeDataProcessor
+          .slice(0, processed.cursorPosition)
+          .replace(/[a-zA-Z0-9]/g, "").length;
+        const afterCount = processedValue
+          .slice(
+            0,
+            processed.cursorPosition +
+              (processedValue.length - beforeDataProcessor.length)
+          )
+          .replace(/[a-zA-Z0-9]/g, "").length;
+        newCursorPosition =
+          processed.cursorPosition + (afterCount - beforeCount);
+      }
 
       if (isCommon) {
         setValueState(processedValue);
@@ -355,10 +385,10 @@ const useInput = ({
       }
 
       requestAnimationFrame(() => {
-        if (inputRef.current) {
+        if (inputRef.current && supportsTextSelection(inputRef.current)) {
           inputRef.current.setSelectionRange(
-            processed.cursorPosition,
-            processed.cursorPosition
+            newCursorPosition,
+            newCursorPosition
           );
         }
       });
@@ -388,7 +418,9 @@ const useInput = ({
       e.preventDefault();
       e.stopPropagation();
       if (inputRef.current) {
-        inputRef.current.setSelectionRange(0, 0);
+        if (supportsTextSelection(inputRef.current)) {
+          inputRef.current.setSelectionRange(0, 0);
+        }
         inputRef.current.blur();
       }
       return;

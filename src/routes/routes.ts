@@ -6,6 +6,7 @@ import routeConfigs from "../routeConfigs";
 const LoginPage = lazy(() => import("../pages/LoginPage"));
 const ProductListPage = lazy(() => import("../pages/ProductListPage"));
 const CartPage = lazy(() => import("../pages/CartPage"));
+const CheckoutPage = lazy(() => import("../pages/CheckoutPage"));
 
 // import layouts
 const NoHeaderAndFooterLayout = lazy(
@@ -29,6 +30,11 @@ const routes = [
   {
     path: routeConfigs.cart.path,
     component: CartPage,
+    layout: HeaderWithSidebarLayout,
+  },
+  {
+    path: routeConfigs.checkout.path,
+    component: CheckoutPage,
     layout: HeaderWithSidebarLayout,
   },
 ];

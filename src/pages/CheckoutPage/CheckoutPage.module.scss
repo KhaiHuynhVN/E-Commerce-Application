@@ -1,0 +1,35 @@
+.wrapper {
+  background: linear-gradient(
+    135deg,
+    var(--septenary-color) 0%,
+    var(--white-color) 100%
+  );
+  overflow-y: auto;
+
+  .container {
+    .title {
+      font-size: var(--fs-septenary);
+      font-weight: var(--fw-septenary);
+      background: linear-gradient(
+        135deg,
+        var(--forty-sixth-color) 0%,
+        var(--forty-seventh-color) 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideIn 0.5s ease-out;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

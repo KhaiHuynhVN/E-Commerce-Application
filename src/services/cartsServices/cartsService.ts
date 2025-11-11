@@ -50,7 +50,22 @@ const cartsService = {
       const response = await axiosInstance.get<UserCartsResponse>(
         `/carts/user/${userId}`
       );
-      return response.data;
+
+      // Normalize data: Calculate discountedPrice if missing (API inconsistency)
+      const normalizedCarts = response.data.carts.map((cart) => ({
+        ...cart,
+        products: cart.products.map((product) => ({
+          ...product,
+          discountedPrice:
+            product.discountedPrice ??
+            product.total * (1 - product.discountPercentage / 100),
+        })),
+      }));
+
+      return {
+        ...response.data,
+        carts: normalizedCarts,
+      };
     } finally {
       // Clear pending state
       store.dispatch(pendingManagerActions.setIsGetCartPending(false));

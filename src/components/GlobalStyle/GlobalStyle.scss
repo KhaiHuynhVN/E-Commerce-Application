@@ -64,7 +64,7 @@ html {
   }
 
   *::-webkit-scrollbar-track {
-    background-color: var(--thirteenth-color);
+    background-color: var(--white-color);
     border-radius: 10px;
     margin: 2px;
   }
@@ -76,7 +76,7 @@ html {
       var(--forty-seventh-color) 100%
     );
     border-radius: 10px;
-    border: 2px solid var(--thirteenth-color);
+    border: 2px solid var(--white-color);
     transition: all var(--primary-duration) ease;
 
     &:hover {
@@ -94,13 +94,13 @@ html {
   }
 
   *::-webkit-scrollbar-corner {
-    background-color: var(--thirteenth-color);
+    background-color: var(--white-color);
   }
 
   // Custom Scrollbar cho Firefox
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--forty-seventh-color) var(--thirteenth-color);
+    scrollbar-color: var(--forty-seventh-color) var(--senary-color);
   }
 }
 
@@ -123,9 +123,9 @@ html {
   input:-webkit-autofill:active,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:hover {
-    color: var(--white-color) !important;
-    -webkit-text-fill-color: var(--white-color) !important;
-    caret-color: var(--white-color) !important;
+    color: var(--black-color) !important;
+    -webkit-text-fill-color: var(--black-color) !important;
+    caret-color: var(--black-color) !important;
     transition: background-color 999999999s ease-in-out;
   }
 
