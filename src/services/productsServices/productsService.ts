@@ -18,10 +18,12 @@ const productsService = {
   /**
    * Lấy danh sách products với pagination
    * @param params - limit và skip cho pagination
+   * @param signal - AbortSignal để cancel request
    * @returns Danh sách products
    */
   getProducts: async (
-    params: GetProductsParams = {}
+    params: GetProductsParams = {},
+    signal?: AbortSignal
   ): Promise<ProductsResponse> => {
     // Check và notify nếu đang pending
     if (pendingManager.isGetProductsPending) {
@@ -52,6 +54,7 @@ const productsService = {
       const { limit = 20, skip = 0 } = params;
       const response = await axiosInstance.get<ProductsResponse>("/products", {
         params: { limit, skip },
+        signal,
       });
       return response.data;
     } finally {
@@ -64,10 +67,12 @@ const productsService = {
   /**
    * Tìm kiếm products theo tên
    * @param params - query string và pagination params
+   * @param signal - AbortSignal để cancel request
    * @returns Danh sách products matching query
    */
   searchProducts: async (
-    params: SearchProductsParams
+    params: SearchProductsParams,
+    signal?: AbortSignal
   ): Promise<ProductsResponse> => {
     // Check và notify nếu đang pending
     if (pendingManager.isSearchProductsPending) {
@@ -100,6 +105,7 @@ const productsService = {
         "/products/search",
         {
           params: { q, limit, skip },
+          signal,
         }
       );
       return response.data;

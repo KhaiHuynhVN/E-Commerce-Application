@@ -18,9 +18,13 @@ const cartsService = {
   /**
    * Lấy tất cả carts của user hiện tại
    * @param userId - ID của user
+   * @param signal - AbortSignal để cancel request
    * @returns Danh sách carts
    */
-  getUserCarts: async (userId: number): Promise<UserCartsResponse> => {
+  getUserCarts: async (
+    userId: number,
+    signal?: AbortSignal
+  ): Promise<UserCartsResponse> => {
     // Check và notify nếu đang pending
     if (pendingManager.isGetCartPending) {
       notifyService.addNotification(
@@ -48,7 +52,10 @@ const cartsService = {
 
     try {
       const response = await axiosInstance.get<UserCartsResponse>(
-        `/carts/user/${userId}`
+        `/carts/user/${userId}`,
+        {
+          signal,
+        }
       );
 
       // Normalize data: Calculate discountedPrice if missing (API inconsistency)
@@ -118,11 +125,13 @@ const cartsService = {
    * Thêm sản phẩm vào cart (tạo cart mới)
    * @param data - userId và products
    * @param productId - ID sản phẩm để track pending (optional)
+   * @param signal - AbortSignal để cancel request
    * @returns Cart mới được tạo
    */
   addToCart: async (
     data: AddToCartRequest,
-    productId?: number
+    productId?: number,
+    signal?: AbortSignal
   ): Promise<Cart> => {
     // Check pending per product ID (nếu có productId)
     if (
@@ -157,7 +166,9 @@ const cartsService = {
     }
 
     try {
-      const response = await axiosInstance.post<Cart>("/carts/add", data);
+      const response = await axiosInstance.post<Cart>("/carts/add", data, {
+        signal,
+      });
       return response.data;
     } finally {
       // Remove product ID from pending set
@@ -175,12 +186,14 @@ const cartsService = {
    * @param cartId - ID của cart cần update
    * @param data - Products và merge option
    * @param productId - ID sản phẩm để track pending (optional)
+   * @param signal - AbortSignal để cancel request
    * @returns Cart sau khi update
    */
   updateCart: async (
     cartId: number,
     data: UpdateCartRequest,
-    productId?: number
+    productId?: number,
+    signal?: AbortSignal
   ): Promise<Cart> => {
     // Check pending per product ID (nếu có productId)
     if (
@@ -215,7 +228,9 @@ const cartsService = {
     }
 
     try {
-      const response = await axiosInstance.put<Cart>(`/carts/${cartId}`, data);
+      const response = await axiosInstance.put<Cart>(`/carts/${cartId}`, data, {
+        signal,
+      });
       return response.data;
     } finally {
       // Remove product ID from pending set

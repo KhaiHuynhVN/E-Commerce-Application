@@ -40,6 +40,8 @@ const ProductListPage = () => {
   const lastProductRef = useRef<HTMLDivElement | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Map to track AbortControllers for cart operations by product ID
+  const cartControllersRef = useRef<Map<number, AbortController>>(new Map());
 
   const hasMore = products.length < total;
 
@@ -58,17 +60,23 @@ const ProductListPage = () => {
       let response;
       if (searchQuery.trim()) {
         // Search mode
-        response = await productsService.searchProducts({
-          q: searchQuery,
-          limit: LIMIT,
-          skip: currentSkip,
-        });
+        response = await productsService.searchProducts(
+          {
+            q: searchQuery,
+            limit: LIMIT,
+            skip: currentSkip,
+          },
+          abortController.signal
+        );
       } else {
         // Normal mode
-        response = await productsService.getProducts({
-          limit: LIMIT,
-          skip: currentSkip,
-        });
+        response = await productsService.getProducts(
+          {
+            limit: LIMIT,
+            skip: currentSkip,
+          },
+          abortController.signal
+        );
       }
 
       // Check if aborted
@@ -105,6 +113,9 @@ const ProductListPage = () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
+      // Abort all pending cart operations
+      cartControllersRef.current.forEach((controller) => controller.abort());
+      cartControllersRef.current.clear();
 
       // Clear debounce timer
       if (debounceTimerRef.current) {
@@ -213,6 +224,10 @@ const ProductListPage = () => {
         return;
       }
 
+      // Create AbortController for this cart operation
+      const cartController = new AbortController();
+      cartControllersRef.current.set(product.id, cartController);
+
       // Show pending notification ngay lập tức
       const { id: notificationId, placement } = notifyService.addNotification(
         <div>
@@ -243,7 +258,8 @@ const ProductListPage = () => {
               userId: user.id,
               products: [{ id: product.id, quantity: 1 }],
             },
-            product.id
+            product.id,
+            cartController.signal
           );
         } else {
           // Check xem product đã có trong cart chưa
@@ -268,7 +284,8 @@ const ProductListPage = () => {
               merge: false,
               products: updatedProducts,
             },
-            product.id
+            product.id,
+            cartController.signal
           );
         }
 
@@ -290,6 +307,12 @@ const ProductListPage = () => {
           type: "success",
         });
       } catch (err) {
+        // Ignore AbortError (request đã bị cancel)
+        if (err instanceof Error && err.name === "CanceledError") {
+          notifyService.removeNotification(notificationId);
+          return;
+        }
+
         // Cập nhật notification thành lỗi
         notifyService.updatePromiseState({
           id: notificationId,
@@ -316,6 +339,9 @@ const ProductListPage = () => {
           // Nếu là duplicate request, xóa notification đang pending đi
           notifyService.removeNotification(notificationId);
         }
+      } finally {
+        // Cleanup: Remove controller from Map
+        cartControllersRef.current.delete(product.id);
       }
     },
     [user, cart, t]

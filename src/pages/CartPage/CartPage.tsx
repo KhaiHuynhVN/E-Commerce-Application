@@ -67,6 +67,12 @@ const CartPage = () => {
     Record<number, ReturnType<typeof setTimeout>>
   >({});
 
+  // AbortControllers for request cancellation
+  const fetchCartControllerRef = useRef<AbortController | null>(null);
+  const updateCartControllersRef = useRef<Map<number, AbortController>>(
+    new Map()
+  );
+
   // Lấy giỏ hàng của user
   const fetchCart = async () => {
     if (!user) return;
@@ -74,17 +80,34 @@ const CartPage = () => {
     // Nếu đang pending, skip để tránh duplicate call
     if (isGetCartPending) return;
 
+    // Create new AbortController for this request
+    const controller = new AbortController();
+    fetchCartControllerRef.current = controller;
+
     try {
-      const response = await cartsService.getUserCarts(user.id);
+      const response = await cartsService.getUserCarts(
+        user.id,
+        controller.signal
+      );
 
       // Lấy cart đầu tiên của user (active cart)
       if (response.carts.length > 0) {
         dispatch(cartActions.setCart(response.carts[0]));
       }
     } catch (err) {
+      // Ignore AbortError
+      if (err instanceof Error && err.name === "CanceledError") {
+        return;
+      }
+
       const errorMessage =
         err instanceof Error ? err.message : t("serverErrors.unknownError");
       setError(errorMessage);
+    } finally {
+      // Clear ref
+      if (fetchCartControllerRef.current === controller) {
+        fetchCartControllerRef.current = null;
+      }
     }
   };
 
@@ -92,11 +115,23 @@ const CartPage = () => {
   useEffect(() => {
     fetchCart();
 
-    // Cleanup: Clear all debounce timers
+    // Cleanup: Clear all timers and abort controllers
     return () => {
+      // Clear debounce timers
       Object.values(debounceTimersRef.current).forEach((timer) => {
         clearTimeout(timer);
       });
+
+      // Abort fetch cart request
+      if (fetchCartControllerRef.current) {
+        fetchCartControllerRef.current.abort();
+      }
+
+      // Abort all update cart operations
+      updateCartControllersRef.current.forEach((controller) => {
+        controller.abort();
+      });
+      updateCartControllersRef.current.clear();
     };
   }, [user]);
 
@@ -134,6 +169,10 @@ const CartPage = () => {
     // Set debouncing state
     setIsDebouncingQuantityChange(true);
 
+    // Create AbortController for this update operation
+    const updateController = new AbortController();
+    updateCartControllersRef.current.set(productId, updateController);
+
     // Set new debounce timer
     debounceTimersRef.current[productId] = setTimeout(async () => {
       try {
@@ -150,7 +189,8 @@ const CartPage = () => {
             merge: false,
             products: currentProducts,
           },
-          productId
+          productId,
+          updateController.signal
         );
 
         // Update Redux state với server response
@@ -171,6 +211,11 @@ const CartPage = () => {
           setIsDebouncingQuantityChange(false);
         }
       } catch (err) {
+        // Ignore AbortError
+        if (err instanceof Error && err.name === "CanceledError") {
+          return;
+        }
+
         const errorMessage =
           err instanceof Error ? err.message : t("serverErrors.unknownError");
         setError(errorMessage);
@@ -189,6 +234,9 @@ const CartPage = () => {
         if (Object.keys(debounceTimersRef.current).length === 0) {
           setIsDebouncingQuantityChange(false);
         }
+      } finally {
+        // Cleanup: Remove controller from Map
+        updateCartControllersRef.current.delete(productId);
       }
     }, 500);
   };
@@ -212,6 +260,10 @@ const CartPage = () => {
       return;
     }
 
+    // Create AbortController for this remove operation
+    const removeController = new AbortController();
+    updateCartControllersRef.current.set(productToRemove, removeController);
+
     try {
       // Lấy products sau khi remove product này
       const currentProducts = cartProducts
@@ -228,7 +280,8 @@ const CartPage = () => {
           merge: false,
           products: currentProducts,
         },
-        productToRemove
+        productToRemove,
+        removeController.signal
       );
 
       // Update state với server response
@@ -237,12 +290,21 @@ const CartPage = () => {
       // Đóng modal (chỉ khi API success)
       setProductToRemove(null);
     } catch (err) {
+      // Ignore AbortError
+      if (err instanceof Error && err.name === "CanceledError") {
+        setProductToRemove(null);
+        return;
+      }
+
       const errorMessage =
         err instanceof Error ? err.message : t("serverErrors.unknownError");
       setError(errorMessage);
 
       // Đóng modal khi có lỗi
       setProductToRemove(null);
+    } finally {
+      // Cleanup: Remove controller from Map
+      updateCartControllersRef.current.delete(productToRemove);
     }
   };
 
