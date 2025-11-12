@@ -149,7 +149,6 @@ const CheckoutPage = () => {
     } catch (err) {
       // Ignore AbortError (request đã bị cancel)
       if (err instanceof Error && err.name === "CanceledError") {
-        console.log("Place order request was cancelled");
         return;
       }
       console.error("Place order error:", err);
