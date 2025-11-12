@@ -48,6 +48,10 @@ const CheckoutPage = () => {
     pendingManagerSelectors.isDeleteCartPending
   );
 
+  // Local state
+  const [isShippingValid, setIsShippingValid] = useState(false);
+  const [isPaymentValid, setIsPaymentValid] = useState(false);
+
   // Refs for form data
   const shippingFormRef = useRef<{ getData: () => ShippingFormData | null }>(
     null
@@ -57,10 +61,6 @@ const CheckoutPage = () => {
   );
   // Ref for AbortController để cancel requests khi unmount
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  // Local state
-  const [isShippingValid, setIsShippingValid] = useState(false);
-  const [isPaymentValid, setIsPaymentValid] = useState(false);
 
   // Redirect nếu cart trống (chỉ khi cart đã được initialized và thực sự trống)
   // cart !== null nghĩa là đã fetch xong (dù trống hay không)

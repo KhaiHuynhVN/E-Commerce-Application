@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import { useTranslation } from "react-i18next";
 
 import { Icons } from "@/assets";
-import { Button } from "@/commonComponents";
+import { Button, Input } from "@/commonComponents";
 import type { SearchBarProps } from "./SearchBar.types";
 
 import styles from "./SearchBar.module.scss";
@@ -19,12 +19,12 @@ const SearchBar = ({ value, onChange, placeholder }: SearchBarProps) => {
         <Icons.SearchIcon width="20" height="20" strokeWidth="2" />
       </div>
 
-      <input
+      <Input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(value) => onChange(value)}
         placeholder={placeholder || t("common.search")}
-        className={cx("input", "w-full")}
+        inputClassName={cx("input", "w-full rounded-full!")}
       />
 
       {value && (

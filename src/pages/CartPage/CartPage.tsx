@@ -40,18 +40,6 @@ const CartPage = () => {
   const updateCartPendingProductIds = useSelector(
     pendingManagerSelectors.updateCartPendingProductIds
   );
-
-  // Check nếu có bất kỳ update cart operation nào đang pending
-  const hasAnyUpdateCartPending = updateCartPendingProductIds.length > 0;
-
-  const [error, setError] = useState<string | null>(null);
-  const [isDebouncingQuantityChange, setIsDebouncingQuantityChange] =
-    useState(false);
-  const [editingQuantities, setEditingQuantities] = useState<
-    Record<number, number>
-  >({});
-  const [productToRemove, setProductToRemove] = useState<number | null>(null);
-
   // Check pending state cho product đang remove
   const isRemovingProduct = useSelector((state: RootState) =>
     productToRemove !== null
@@ -62,16 +50,26 @@ const CartPage = () => {
       : false
   );
 
+  const [error, setError] = useState<string | null>(null);
+  const [isDebouncingQuantityChange, setIsDebouncingQuantityChange] =
+    useState(false);
+  const [editingQuantities, setEditingQuantities] = useState<
+    Record<number, number>
+  >({});
+  const [productToRemove, setProductToRemove] = useState<number | null>(null);
+
   // Debounce timers cho mỗi product quantity change
   const debounceTimersRef = useRef<
     Record<number, ReturnType<typeof setTimeout>>
   >({});
-
   // AbortControllers for request cancellation
   const fetchCartControllerRef = useRef<AbortController | null>(null);
   const updateCartControllersRef = useRef<Map<number, AbortController>>(
     new Map()
   );
+
+  // Check nếu có bất kỳ update cart operation nào đang pending
+  const hasAnyUpdateCartPending = updateCartPendingProductIds.length > 0;
 
   // Lấy giỏ hàng của user
   const fetchCart = async () => {

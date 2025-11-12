@@ -23,6 +23,8 @@ const OrderConfirmationPage = () => {
 
   const orderInfo = useSelector(orderConfirmationSelectors.orderInfo);
 
+  const discount = orderInfo ? orderInfo.total - orderInfo.discountedTotal : 0;
+
   // Redirect nếu không có orderInfo (user vào trực tiếp URL)
   useEffect(() => {
     if (!orderInfo) {
@@ -44,8 +46,6 @@ const OrderConfirmationPage = () => {
   if (!orderInfo) {
     return null; // Hoặc loading state
   }
-
-  const discount = orderInfo.total - orderInfo.discountedTotal;
 
   return (
     <div

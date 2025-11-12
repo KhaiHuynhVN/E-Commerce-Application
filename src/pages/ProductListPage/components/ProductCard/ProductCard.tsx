@@ -25,11 +25,10 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const isUpdateCartPendingProductId = useSelector((state: RootState) =>
     pendingManagerSelectors.hasUpdateCartPendingProductId(state, product.id)
   );
-  const isPending = isAddToCartPendingProductId || isUpdateCartPendingProductId;
 
+  const isPending = isAddToCartPendingProductId || isUpdateCartPendingProductId;
   const { title, thumbnail, price, rating, discountPercentage, stock } =
     product;
-
   // Calculate discounted price
   const discountedPrice = price - (price * discountPercentage) / 100;
 

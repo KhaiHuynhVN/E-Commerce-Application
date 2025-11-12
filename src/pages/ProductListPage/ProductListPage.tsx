@@ -45,62 +45,6 @@ const ProductListPage = () => {
 
   const hasMore = products.length < total;
 
-  // Fetch products từ API
-  const fetchProducts = async (currentSkip: number, isAppend = false) => {
-    if (pendingManager.isGetProductsPending) return;
-
-    // Create new AbortController for this request
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      let response;
-      if (searchQuery.trim()) {
-        // Search mode
-        response = await productsService.searchProducts(
-          {
-            q: searchQuery,
-            limit: LIMIT,
-            skip: currentSkip,
-          },
-          abortController.signal
-        );
-      } else {
-        // Normal mode
-        response = await productsService.getProducts(
-          {
-            limit: LIMIT,
-            skip: currentSkip,
-          },
-          abortController.signal
-        );
-      }
-
-      // Check if aborted
-      if (abortController.signal.aborted) return;
-
-      if (isAppend) {
-        setProducts((prev) => [...prev, ...response.products]);
-      } else {
-        setProducts(response.products);
-      }
-
-      setTotal(response.total);
-    } catch (err) {
-      // Ignore aborted requests
-      if (err instanceof Error && err.name === "AbortError") return;
-
-      const errorMessage =
-        err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Fetch products khi component mount
   useEffect(() => {
     fetchProducts(0, false);
@@ -189,6 +133,62 @@ const ProductListPage = () => {
       }
     };
   }, [products, hasMore, isLoading]);
+
+  // Fetch products từ API
+  const fetchProducts = async (currentSkip: number, isAppend = false) => {
+    if (pendingManager.isGetProductsPending) return;
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      let response;
+      if (searchQuery.trim()) {
+        // Search mode
+        response = await productsService.searchProducts(
+          {
+            q: searchQuery,
+            limit: LIMIT,
+            skip: currentSkip,
+          },
+          abortController.signal
+        );
+      } else {
+        // Normal mode
+        response = await productsService.getProducts(
+          {
+            limit: LIMIT,
+            skip: currentSkip,
+          },
+          abortController.signal
+        );
+      }
+
+      // Check if aborted
+      if (abortController.signal.aborted) return;
+
+      if (isAppend) {
+        setProducts((prev) => [...prev, ...response.products]);
+      } else {
+        setProducts(response.products);
+      }
+
+      setTotal(response.total);
+    } catch (err) {
+      // Ignore aborted requests
+      if (err instanceof Error && err.name === "AbortError") return;
+
+      const errorMessage =
+        err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Handle search query change
   const handleSearchChange = useCallback((value: string) => {
