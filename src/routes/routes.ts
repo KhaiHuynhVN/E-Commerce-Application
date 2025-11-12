@@ -7,6 +7,9 @@ const LoginPage = lazy(() => import("../pages/LoginPage"));
 const ProductListPage = lazy(() => import("../pages/ProductListPage"));
 const CartPage = lazy(() => import("../pages/CartPage"));
 const CheckoutPage = lazy(() => import("../pages/CheckoutPage"));
+const OrderConfirmationPage = lazy(
+  () => import("../pages/OrderConfirmationPage")
+);
 
 // import layouts
 const NoHeaderAndFooterLayout = lazy(
@@ -35,6 +38,11 @@ const routes = [
   {
     path: routeConfigs.checkout.path,
     component: CheckoutPage,
+    layout: HeaderWithSidebarLayout,
+  },
+  {
+    path: routeConfigs.orderConfirmation.path,
+    component: OrderConfirmationPage,
     layout: HeaderWithSidebarLayout,
   },
 ];

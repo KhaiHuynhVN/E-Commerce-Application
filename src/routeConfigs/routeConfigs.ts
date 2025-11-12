@@ -8,6 +8,7 @@ interface RouteConfigs {
   products: RouteConfig;
   cart: RouteConfig;
   checkout: RouteConfig;
+  orderConfirmation: RouteConfig;
   // Thêm các routes khác ở đây khi cần
   // profile: RouteConfig;
 }
@@ -28,6 +29,10 @@ const routeConfigs: RouteConfigs = {
   checkout: {
     pageName: "Checkout",
     path: "/checkout",
+  },
+  orderConfirmation: {
+    pageName: "Order Confirmation",
+    path: "/order-confirmation",
   },
 } as const;
 

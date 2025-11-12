@@ -14,11 +14,13 @@ const usersService = {
    * Update user information
    * @param userId - ID của user
    * @param data - Thông tin cần update
+   * @param signal - AbortSignal để cancel request
    * @returns Updated user data
    */
   updateUser: async (
     userId: number,
-    data: UpdateUserRequest
+    data: UpdateUserRequest,
+    signal?: AbortSignal
   ): Promise<User> => {
     // Check và notify nếu đang pending
     if (pendingManager.isUpdateUserPending) {
@@ -46,7 +48,9 @@ const usersService = {
     pendingManager.setUpdateUserPending(true);
 
     try {
-      const response = await axiosInstance.put<User>(`/users/${userId}`, data);
+      const response = await axiosInstance.put<User>(`/users/${userId}`, data, {
+        signal,
+      });
       return response.data;
     } finally {
       // Clear pending state
@@ -57,4 +61,3 @@ const usersService = {
 };
 
 export { usersService };
-

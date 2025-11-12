@@ -6,6 +6,7 @@ import {
   globalSlice,
   pendingManagerSlice,
   cartSlice,
+  orderConfirmationSlice,
 } from "./slices";
 
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     global: globalSlice.reducer,
     pendingManager: pendingManagerSlice.reducer,
     cart: cartSlice.reducer,
+    orderConfirmation: orderConfirmationSlice.reducer,
   },
 });
 

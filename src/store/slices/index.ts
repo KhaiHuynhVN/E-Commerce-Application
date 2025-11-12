@@ -22,4 +22,8 @@ export {
   cartSlice,
   cartActions,
   cartSelectors,
+  // orderConfirmation
+  orderConfirmationSlice,
+  orderConfirmationActions,
+  orderConfirmationSelectors,
 } from "./pageSlices";

@@ -110,12 +110,26 @@
     "expiryDate": "Expiry Date",
     "cvv": "CVV",
     "placeOrder": "Place Order",
+    "placingOrder": "Placing Order...",
     "processing": "Processing...",
     "orderSuccess": "Order Placed Successfully!",
     "orderConfirmation": "Order Confirmation",
     "thankYou": "Thank you for your purchase!",
     "orderNumber": "Order Number",
     "backToShopping": "Back to Shopping"
+  },
+  "orderConfirmation": {
+    "confirmationTitle": "Order Placed Successfully!",
+    "thankYou": "Thank you for your purchase!",
+    "orderNumber": "Order Number",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "items": "Items",
+    "products": "products",
+    "quantity": "items",
+    "backToShopping": "Continue Shopping"
   },
   "languages": {
     "english": "English",

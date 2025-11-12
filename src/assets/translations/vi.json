@@ -110,12 +110,26 @@
     "expiryDate": "Ngày Hết Hạn",
     "cvv": "CVV",
     "placeOrder": "Đặt Hàng",
+    "placingOrder": "Đang Đặt Hàng...",
     "processing": "Đang Xử Lý...",
     "orderSuccess": "Đặt Hàng Thành Công!",
     "orderConfirmation": "Xác Nhận Đơn Hàng",
     "thankYou": "Cảm ơn bạn đã mua hàng!",
     "orderNumber": "Mã Đơn Hàng",
     "backToShopping": "Quay Lại Mua Sắm"
+  },
+  "orderConfirmation": {
+    "confirmationTitle": "Đặt Hàng Thành Công!",
+    "thankYou": "Cảm ơn bạn đã mua hàng!",
+    "orderNumber": "Mã Đơn Hàng",
+    "orderSummary": "Tóm Tắt Đơn Hàng",
+    "subtotal": "Tạm Tính",
+    "discount": "Giảm Giá",
+    "total": "Tổng Cộng",
+    "items": "Sản Phẩm",
+    "products": "sản phẩm",
+    "quantity": "món",
+    "backToShopping": "Tiếp Tục Mua Sắm"
   },
   "languages": {
     "english": "Tiếng Anh",

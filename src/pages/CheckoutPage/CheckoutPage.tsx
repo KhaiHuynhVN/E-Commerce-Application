@@ -9,11 +9,13 @@ import {
   authSelectors,
   cartSelectors,
   cartActions,
+  orderConfirmationActions,
   pendingManagerSelectors,
 } from "@/store/slices";
 import { Button } from "@/commonComponents";
-import { InlineLoader } from "@/components";
+import { InnerLoader } from "@/components";
 import { usersService, cartsService } from "@/services";
+import { useGlobalLoaderHandle } from "@/hooks";
 import {
   ShippingForm,
   PaymentForm,
@@ -30,6 +32,8 @@ const CheckoutPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { show: showGlobalLoader, hide: hideGlobalLoader } =
+    useGlobalLoaderHandle();
 
   const user = useSelector(authSelectors.user);
   const cart = useSelector(cartSelectors.cart);
@@ -51,6 +55,8 @@ const CheckoutPage = () => {
   const paymentFormRef = useRef<{ getData: () => PaymentFormData | null }>(
     null
   );
+  // Ref for AbortController để cancel requests khi unmount
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Local state
   const [isShippingValid, setIsShippingValid] = useState(false);
@@ -65,6 +71,15 @@ const CheckoutPage = () => {
     }
   }, [cart, cartProducts.length]);
 
+  // Cleanup: Cancel requests khi unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
   // Handle validity changes
   const handleShippingValidityChange = (isValid: boolean) => {
     setIsShippingValid(isValid);
@@ -77,7 +92,7 @@ const CheckoutPage = () => {
   // Handle place order
   const handlePlaceOrder = async () => {
     // Guard checks
-    if (!user || !cartId) return;
+    if (!user || !cartId || !cart) return;
     if (isUpdateUserPending || isDeleteCartPending) return;
 
     // Get data from forms via refs
@@ -89,31 +104,61 @@ const CheckoutPage = () => {
       return;
     }
 
+    // Show global loader
+    showGlobalLoader();
+
+    // Tạo AbortController mới cho request này
+    abortControllerRef.current = new AbortController();
+    const { signal } = abortControllerRef.current;
+
     try {
       // Step 1: Update user information with shipping address
-      await usersService.updateUser(user.id, {
-        firstName: shippingData.name.split(" ")[0],
-        lastName: shippingData.name.split(" ").slice(1).join(" ") || "",
-        email: shippingData.email,
-        phone: shippingData.phone,
-        address: {
-          address: shippingData.street,
-          postalCode: shippingData.postalCode,
+      await usersService.updateUser(
+        user.id,
+        {
+          firstName: shippingData.name.split(" ")[0],
+          lastName: shippingData.name.split(" ").slice(1).join(" ") || "",
+          email: shippingData.email,
+          phone: shippingData.phone,
+          address: {
+            address: shippingData.street,
+            postalCode: shippingData.postalCode,
+          },
         },
-      });
+        signal
+      );
 
       // Step 2: Delete cart
-      await cartsService.deleteCart(cartId);
+      await cartsService.deleteCart(cartId, signal);
 
-      // Step 3: Clear cart in Redux
+      // Step 3: Save order info before clearing cart
+      const orderInfo = {
+        orderNumber: `ORD-${Date.now()}`,
+        total: cart.total,
+        discountedTotal: cart.discountedTotal,
+        totalProducts: cart.totalProducts,
+        totalQuantity: cart.totalQuantity,
+      };
+      dispatch(orderConfirmationActions.setOrderInfo(orderInfo));
+
+      // Step 4: Clear cart in Redux
       dispatch(cartActions.clearCart());
 
-      // Step 4: Navigate to order confirmation page
-      // TODO: Create OrderConfirmationPage
-      navigate(routeConfigs.products.path);
+      // Step 5: Navigate to order confirmation page
+      navigate(routeConfigs.orderConfirmation.path);
     } catch (err) {
+      // Ignore AbortError (request đã bị cancel)
+      if (err instanceof Error && err.name === "CanceledError") {
+        console.log("Place order request was cancelled");
+        return;
+      }
       console.error("Place order error:", err);
       // Error handling already done in services
+    } finally {
+      // Hide global loader
+      hideGlobalLoader();
+      // Clear ref sau khi hoàn thành
+      abortControllerRef.current = null;
     }
   };
 
@@ -163,7 +208,14 @@ const CheckoutPage = () => {
                 }
               >
                 {isUpdateUserPending || isDeleteCartPending ? (
-                  <InlineLoader boxSize="16px" containerSize="calc(16*6px)" />
+                  <div className="flex items-center gap-2">
+                    <InnerLoader
+                      size="20px"
+                      className="mr-2"
+                      circleClassName="stroke-white stroke-[8px]"
+                    />
+                    {t("checkout.placingOrder")}
+                  </div>
                 ) : (
                   t("checkout.placeOrder")
                 )}

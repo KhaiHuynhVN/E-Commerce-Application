@@ -231,9 +231,10 @@ const cartsService = {
   /**
    * Xóa cart
    * @param cartId - ID của cart cần xóa
+   * @param signal - AbortSignal để cancel request
    * @returns Cart đã xóa (với isDeleted flag)
    */
-  deleteCart: async (cartId: number): Promise<Cart> => {
+  deleteCart: async (cartId: number, signal?: AbortSignal): Promise<Cart> => {
     // Check và notify nếu đang pending
     if (pendingManager.isDeleteCartPending) {
       notifyService.addNotification(
@@ -260,7 +261,9 @@ const cartsService = {
     pendingManager.setDeleteCartPending(true);
 
     try {
-      const response = await axiosInstance.delete<Cart>(`/carts/${cartId}`);
+      const response = await axiosInstance.delete<Cart>(`/carts/${cartId}`, {
+        signal,
+      });
       return response.data;
     } finally {
       // Clear pending state
