@@ -132,7 +132,8 @@
     "addToCartInProgress": "Đang thêm vào giỏ hàng, vui lòng chờ...",
     "updateCartInProgress": "Đang cập nhật giỏ hàng, vui lòng chờ...",
     "getCartInProgress": "Đang tải giỏ hàng, vui lòng chờ...",
-    "deleteCartInProgress": "Đang xóa giỏ hàng, vui lòng chờ..."
+    "deleteCartInProgress": "Đang xóa giỏ hàng, vui lòng chờ...",
+    "updateUserInProgress": "Đang cập nhật thông tin người dùng, vui lòng chờ..."
   },
   "pendingErrors": {
     "loginInProgress": "Yêu cầu đăng nhập đang được xử lý",
@@ -145,6 +146,7 @@
     "addToCartInProgress": "Yêu cầu thêm vào giỏ hàng đang được xử lý",
     "updateCartInProgress": "Yêu cầu cập nhật giỏ hàng đang được xử lý",
     "getCartInProgress": "Yêu cầu tải giỏ hàng đang được xử lý",
-    "deleteCartInProgress": "Yêu cầu xóa giỏ hàng đang được xử lý"
+    "deleteCartInProgress": "Yêu cầu xóa giỏ hàng đang được xử lý",
+    "updateUserInProgress": "Yêu cầu cập nhật người dùng đang được xử lý"
   }
 }

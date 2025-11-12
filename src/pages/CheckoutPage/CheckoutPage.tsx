@@ -1,12 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import classNames from "classnames/bind";
 
-import { cartSelectors } from "@/store/slices";
+import {
+  authSelectors,
+  cartSelectors,
+  cartActions,
+  pendingManagerSelectors,
+} from "@/store/slices";
 import { Button } from "@/commonComponents";
+import { InlineLoader } from "@/components";
+import { usersService, cartsService } from "@/services";
 import {
   ShippingForm,
   PaymentForm,
@@ -22,17 +29,30 @@ const cx = classNames.bind(styles);
 const CheckoutPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const user = useSelector(authSelectors.user);
   const cart = useSelector(cartSelectors.cart);
+  const cartId = useSelector(cartSelectors.cartId);
   const cartProducts = useSelector(cartSelectors.cartProducts);
   const cartTotal = useSelector(cartSelectors.cartTotal);
   const cartDiscountedTotal = useSelector(cartSelectors.cartDiscountedTotal);
+  const isUpdateUserPending = useSelector(
+    pendingManagerSelectors.isUpdateUserPending
+  );
+  const isDeleteCartPending = useSelector(
+    pendingManagerSelectors.isDeleteCartPending
+  );
 
-  // Local state để lưu form data
-  const [shippingData, setShippingData] = useState<ShippingFormData | null>(
+  // Refs for form data
+  const shippingFormRef = useRef<{ getData: () => ShippingFormData | null }>(
     null
   );
-  const [paymentData, setPaymentData] = useState<PaymentFormData | null>(null);
+  const paymentFormRef = useRef<{ getData: () => PaymentFormData | null }>(
+    null
+  );
+
+  // Local state
   const [isShippingValid, setIsShippingValid] = useState(false);
   const [isPaymentValid, setIsPaymentValid] = useState(false);
 
@@ -45,18 +65,6 @@ const CheckoutPage = () => {
     }
   }, [cart, cartProducts.length]);
 
-  // Handle shipping form submit
-  const handleShippingSubmit = (data: ShippingFormData) => {
-    setShippingData(data);
-    console.log("Shipping Data:", data);
-  };
-
-  // Handle payment form submit
-  const handlePaymentSubmit = (data: PaymentFormData) => {
-    setPaymentData(data);
-    console.log("Payment Data:", data);
-  };
-
   // Handle validity changes
   const handleShippingValidityChange = (isValid: boolean) => {
     setIsShippingValid(isValid);
@@ -67,21 +75,46 @@ const CheckoutPage = () => {
   };
 
   // Handle place order
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
+    // Guard checks
+    if (!user || !cartId) return;
+    if (isUpdateUserPending || isDeleteCartPending) return;
+
+    // Get data from forms via refs
+    const shippingData = shippingFormRef.current?.getData();
+    const paymentData = paymentFormRef.current?.getData();
+
     if (!shippingData || !paymentData) {
-      console.log("Please fill in all forms");
+      console.error("Form data is invalid or incomplete");
       return;
     }
 
-    console.log("Place Order:", {
-      shipping: shippingData,
-      payment: paymentData,
-      cart: {
-        products: cartProducts,
-        total: cartTotal,
-        discountedTotal: cartDiscountedTotal,
-      },
-    });
+    try {
+      // Step 1: Update user information with shipping address
+      await usersService.updateUser(user.id, {
+        firstName: shippingData.name.split(" ")[0],
+        lastName: shippingData.name.split(" ").slice(1).join(" ") || "",
+        email: shippingData.email,
+        phone: shippingData.phone,
+        address: {
+          address: shippingData.street,
+          postalCode: shippingData.postalCode,
+        },
+      });
+
+      // Step 2: Delete cart
+      await cartsService.deleteCart(cartId);
+
+      // Step 3: Clear cart in Redux
+      dispatch(cartActions.clearCart());
+
+      // Step 4: Navigate to order confirmation page
+      // TODO: Create OrderConfirmationPage
+      navigate(routeConfigs.products.path);
+    } catch (err) {
+      console.error("Place order error:", err);
+      // Error handling already done in services
+    }
   };
 
   return (
@@ -103,8 +136,7 @@ const CheckoutPage = () => {
             {/* Shipping Form */}
             <div className="bg-(--white-color) p-6 rounded-lg shadow">
               <ShippingForm
-                onSubmit={handleShippingSubmit}
-                defaultValues={shippingData || undefined}
+                ref={shippingFormRef}
                 onValidityChange={handleShippingValidityChange}
               />
             </div>
@@ -112,8 +144,7 @@ const CheckoutPage = () => {
             {/* Payment Form */}
             <div className="bg-(--white-color) p-6 rounded-lg shadow">
               <PaymentForm
-                onSubmit={handlePaymentSubmit}
-                defaultValues={paymentData || undefined}
+                ref={paymentFormRef}
                 onValidityChange={handlePaymentValidityChange}
               />
             </div>
@@ -124,9 +155,18 @@ const CheckoutPage = () => {
                 styleType="primary"
                 className="min-w-[200px]"
                 onClick={handlePlaceOrder}
-                disabled={!isShippingValid || !isPaymentValid}
+                disabled={
+                  !isShippingValid ||
+                  !isPaymentValid ||
+                  isUpdateUserPending ||
+                  isDeleteCartPending
+                }
               >
-                {t("checkout.placeOrder")}
+                {isUpdateUserPending || isDeleteCartPending ? (
+                  <InlineLoader boxSize="16px" containerSize="calc(16*6px)" />
+                ) : (
+                  t("checkout.placeOrder")
+                )}
               </Button>
             </div>
           </div>

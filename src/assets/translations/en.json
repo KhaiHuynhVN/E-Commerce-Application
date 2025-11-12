@@ -132,7 +132,8 @@
     "addToCartInProgress": "Adding to cart, please wait...",
     "updateCartInProgress": "Updating cart, please wait...",
     "getCartInProgress": "Loading cart, please wait...",
-    "deleteCartInProgress": "Deleting cart, please wait..."
+    "deleteCartInProgress": "Deleting cart, please wait...",
+    "updateUserInProgress": "Updating user information, please wait..."
   },
   "pendingErrors": {
     "loginInProgress": "Login request already in progress",
@@ -145,6 +146,7 @@
     "addToCartInProgress": "Add to cart request already in progress",
     "updateCartInProgress": "Update cart request already in progress",
     "getCartInProgress": "Get cart request already in progress",
-    "deleteCartInProgress": "Delete cart request already in progress"
+    "deleteCartInProgress": "Delete cart request already in progress",
+    "updateUserInProgress": "Update user request already in progress"
   }
 }

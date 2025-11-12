@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, forwardRef, useImperativeHandle } from "react";
 import {
   useForm,
   Controller,
@@ -22,17 +22,16 @@ import styles from "./PaymentForm.module.scss";
 
 const cx = classNames.bind(styles);
 
-const PaymentForm = ({
-  onSubmit,
-  defaultValues,
-  className,
-  onValidityChange,
-}: PaymentFormProps) => {
+const PaymentForm = forwardRef<
+  { getData: () => PaymentFormData | null },
+  PaymentFormProps
+>(({ onSubmit, defaultValues, className, onValidityChange }, ref) => {
   const { t } = useTranslation();
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors, isValid },
   } = useForm<PaymentFormData>({
     mode: "onChange",
@@ -45,6 +44,14 @@ const PaymentForm = ({
     },
   });
 
+  // Expose getData method to parent via ref
+  useImperativeHandle(ref, () => ({
+    getData: () => {
+      if (!isValid) return null;
+      return getValues();
+    },
+  }));
+
   // Notify parent component về validity changes
   useEffect(() => {
     onValidityChange?.(isValid);
@@ -52,7 +59,7 @@ const PaymentForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit || (() => {}))}
       className={cx("wrapper", className)}
     >
       <h2 className="text-[2rem] font-bold mb-6">
@@ -150,6 +157,8 @@ const PaymentForm = ({
       </div>
     </form>
   );
-};
+});
+
+PaymentForm.displayName = "PaymentForm";
 
 export default memo(PaymentForm);

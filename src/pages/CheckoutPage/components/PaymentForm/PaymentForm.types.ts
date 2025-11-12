@@ -6,7 +6,7 @@ type PaymentFormData = {
 };
 
 type PaymentFormProps = {
-  onSubmit: (data: PaymentFormData) => void;
+  onSubmit?: (data: PaymentFormData) => void;
   defaultValues?: Partial<PaymentFormData>;
   className?: string;
   onValidityChange?: (isValid: boolean) => void;

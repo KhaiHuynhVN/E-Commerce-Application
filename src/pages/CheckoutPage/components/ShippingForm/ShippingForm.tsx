@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useForm, type Control, type FieldValues } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,17 +12,16 @@ import styles from "./ShippingForm.module.scss";
 
 const cx = classNames.bind(styles);
 
-const ShippingForm = ({
-  onSubmit,
-  defaultValues,
-  className,
-  onValidityChange,
-}: ShippingFormProps) => {
+const ShippingForm = forwardRef<
+  { getData: () => ShippingFormData | null },
+  ShippingFormProps
+>(({ onSubmit, defaultValues, className, onValidityChange }, ref) => {
   const { t } = useTranslation();
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors, isValid },
   } = useForm<ShippingFormData>({
     mode: "onChange",
@@ -38,6 +37,14 @@ const ShippingForm = ({
     },
   });
 
+  // Expose getData method to parent via ref
+  useImperativeHandle(ref, () => ({
+    getData: () => {
+      if (!isValid) return null;
+      return getValues();
+    },
+  }));
+
   // Notify parent component về validity changes
   useEffect(() => {
     onValidityChange?.(isValid);
@@ -45,7 +52,7 @@ const ShippingForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit || (() => {}))}
       className={cx("wrapper", className)}
     >
       <h2 className="text-[2rem] font-bold mb-6">
@@ -181,6 +188,8 @@ const ShippingForm = ({
       </div>
     </form>
   );
-};
+});
+
+ShippingForm.displayName = "ShippingForm";
 
 export default memo(ShippingForm);

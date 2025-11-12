@@ -33,6 +33,10 @@ const isGetCartPending = (state: RootState) =>
 const isDeleteCartPending = (state: RootState) =>
   state.pendingManager.isDeleteCartPending;
 
+// User services
+const isUpdateUserPending = (state: RootState) =>
+  state.pendingManager.isUpdateUserPending;
+
 const pendingManagerSelectors = {
   // Auth
   isLoginPending,
@@ -50,6 +54,8 @@ const pendingManagerSelectors = {
   hasUpdateCartPendingProductId,
   isGetCartPending,
   isDeleteCartPending,
+  // User
+  isUpdateUserPending,
 };
 
 export default pendingManagerSelectors;

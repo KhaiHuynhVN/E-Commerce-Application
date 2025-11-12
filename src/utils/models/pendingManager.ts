@@ -16,6 +16,9 @@ class PendingManager {
   #isGetCartPending: boolean = false;
   #isDeleteCartPending: boolean = false;
 
+  // User services
+  #isUpdateUserPending: boolean = false;
+
   // Auth - Login
   setLoginPending(isPending: boolean): void {
     this.#isLoginPending = isPending;
@@ -121,6 +124,15 @@ class PendingManager {
 
   get isDeleteCartPending(): boolean {
     return this.#isDeleteCartPending;
+  }
+
+  // User - Update User
+  setUpdateUserPending(isPending: boolean): void {
+    this.#isUpdateUserPending = isPending;
+  }
+
+  get isUpdateUserPending(): boolean {
+    return this.#isUpdateUserPending;
   }
 }
 

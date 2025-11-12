@@ -17,6 +17,9 @@ interface PendingManagerState {
   updateCartPendingProductIds: number[]; // Track pending product IDs
   isGetCartPending: boolean;
   isDeleteCartPending: boolean;
+
+  // User services
+  isUpdateUserPending: boolean;
 }
 
 const initialState: PendingManagerState = {
@@ -36,6 +39,9 @@ const initialState: PendingManagerState = {
   updateCartPendingProductIds: [],
   isGetCartPending: false,
   isDeleteCartPending: false,
+
+  // User services
+  isUpdateUserPending: false,
 };
 
 const pendingManagerSlice = createSlice({
@@ -95,6 +101,11 @@ const pendingManagerSlice = createSlice({
     setIsDeleteCartPending: (state, action: PayloadAction<boolean>) => {
       state.isDeleteCartPending = action.payload;
     },
+
+    // User services
+    setIsUpdateUserPending: (state, action: PayloadAction<boolean>) => {
+      state.isUpdateUserPending = action.payload;
+    },
   },
 });
 
@@ -115,6 +126,7 @@ export const {
   removeUpdateCartPendingProductId,
   setIsGetCartPending,
   setIsDeleteCartPending,
+  setIsUpdateUserPending,
 } = pendingManagerSlice.actions;
 
 export default pendingManagerSlice;

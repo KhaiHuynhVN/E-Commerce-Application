@@ -17,3 +17,6 @@ export type {
   AddToCartRequest,
   UpdateCartRequest,
 } from "./cartsServices";
+
+export { usersService } from "./usersService";
+export type { User, Address, UpdateUserRequest } from "./usersService";

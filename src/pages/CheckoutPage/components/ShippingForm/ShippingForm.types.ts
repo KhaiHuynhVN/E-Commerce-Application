@@ -9,7 +9,7 @@ type ShippingFormData = {
 };
 
 type ShippingFormProps = {
-  onSubmit: (data: ShippingFormData) => void;
+  onSubmit?: (data: ShippingFormData) => void;
   defaultValues?: Partial<ShippingFormData>;
   className?: string;
   onValidityChange?: (isValid: boolean) => void;
