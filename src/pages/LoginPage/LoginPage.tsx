@@ -38,6 +38,7 @@ const LoginPage = () => {
 
   // Local state để quản lý error
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Tạo schema với translation
   const loginSchema = createLoginSchema(t);
@@ -121,6 +122,10 @@ const LoginPage = () => {
     }
   };
 
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div
       className={cx(
@@ -144,10 +149,11 @@ const LoginPage = () => {
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {/* Username Field */}
           <div>
-            <label className={cx("label", "block mb-2")}>
+            <label className={cx("label", "block mb-2")} htmlFor="username">
               {t("login.usernameLabel")}
             </label>
             <Input
+              id="username"
               name="username"
               type="text"
               placeholder={t("login.username")}
@@ -164,17 +170,43 @@ const LoginPage = () => {
 
           {/* Password Field */}
           <div>
-            <label className={cx("label", "block mb-2")}>
+            <label className={cx("label", "block mb-2")} htmlFor="password">
               {t("login.passwordLabel")}
             </label>
-            <Input
-              name="password"
-              type="password"
-              placeholder={t("login.password")}
-              control={control as unknown as Control<FieldValues>}
-              disabled={isLoading}
-              styleType="primary"
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                inputClassName="pr-[36px]!"
+                placeholder={t("login.password")}
+                control={control as unknown as Control<FieldValues>}
+                disabled={isLoading}
+                styleType="primary"
+              />
+              <Icons.EyeCloseIcon
+                width="20"
+                height="20"
+                className={cx(
+                  "absolute right-[12px] top-1/2 -translate-y-1/2",
+                  {
+                    hidden: showPassword,
+                  }
+                )}
+                onClick={handleTogglePasswordVisibility}
+              />
+              <Icons.EyeOpenIcon
+                width="20"
+                height="20"
+                className={cx(
+                  "absolute right-[12px] top-1/2 -translate-y-1/2",
+                  {
+                    hidden: !showPassword,
+                  }
+                )}
+                onClick={handleTogglePasswordVisibility}
+              />
+            </div>
             {errors.password && (
               <span className={cx("errorText", "mt-1 block")}>
                 {errors.password.message}

@@ -1,8 +1,11 @@
+import type { SVGProps } from "react";
+
 /**
  * Props interface chung cho tất cả SVG Icon components
  * Sử dụng cho tất cả các icon components trong dự án
+ * Extends React.SVGProps để hỗ trợ tất cả HTML/SVG attributes (onClick, style, etc.)
  */
-interface SvgIconProps {
+interface SvgIconProps extends SVGProps<SVGSVGElement> {
   /** CSS class name để tùy chỉnh styling */
   className?: string;
 

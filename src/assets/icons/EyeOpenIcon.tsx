@@ -7,6 +7,7 @@ const EyeOpenIcon = ({
   fill = "currentColor",
   stroke = "",
   strokeWidth = "",
+  ...props
 }: SvgIconProps) => (
   <svg
     className={className}
@@ -22,6 +23,7 @@ const EyeOpenIcon = ({
     y="0"
     viewBox="0 0 488.85 488.85"
     xmlSpace="preserve"
+    {...props}
   >
     <g>
       <path

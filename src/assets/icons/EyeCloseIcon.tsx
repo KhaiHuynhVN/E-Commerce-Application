@@ -7,6 +7,7 @@ const EyeCloseIcon = ({
   fill = "currentColor",
   stroke = "",
   strokeWidth = "",
+  ...props
 }: SvgIconProps) => (
   <svg
     className={className}
@@ -22,6 +23,7 @@ const EyeCloseIcon = ({
     y="0"
     viewBox="0 0 512 512"
     xmlSpace="preserve"
+    {...props}
   >
     <g>
       <g data-name="Layer 16">
