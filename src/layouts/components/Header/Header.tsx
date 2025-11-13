@@ -6,7 +6,7 @@ import classNames from "classnames/bind";
 import { authActions, authSelectors, cartSelectors } from "@/store/slices";
 import { Button } from "@/commonComponents";
 import { Icons } from "@/assets";
-import { languageConstants } from "@/utils";
+import { commonConstants, languageConstants } from "@/utils";
 import routeConfigs from "@/routeConfigs";
 import useHeader from "./useHeader";
 
@@ -43,6 +43,8 @@ const Header = () => {
   // Thay đổi ngôn ngữ
   const handleChangeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
+    // Lưu language preference vào localStorage
+    localStorage.setItem(commonConstants.LANGUAGE, lang);
   };
 
   return (

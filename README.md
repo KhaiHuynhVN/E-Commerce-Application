@@ -67,8 +67,6 @@ The project required using a pre-existing component library (Button, Input, Moda
 
 - Creating comprehensive type definitions for all component props
 - Converting complex hooks (`useInput`, `useNotify`) with proper type inference
-- Using generic types and utility types (`Pick`, `Omit`, `Control<FieldValues>`)
-- Handling edge cases (e.g., `setSelectionRange` not supported on email inputs)
 
 **Result**: Full TypeScript support with IntelliSense and compile-time type checking.
 
